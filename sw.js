@@ -1,5 +1,5 @@
 // Çevrimdışı çalışma için basit önbellek. Sürüm değişince CACHE adını artır.
-const CACHE = 'motor-sinavi-v1';
+const CACHE = 'motor-sinavi-v2';
 const SHELL = [
   './',
   './index.html',
