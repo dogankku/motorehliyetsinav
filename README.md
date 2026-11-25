@@ -29,11 +29,21 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 | Q / E | Sol / sağ sinyal |
 | H | Korna (basılı tut) |
 | L | Uzun far |
+| G | Göstergeye bak (basılı tut) |
 | R | Aşamayı baştan al |
 | Enter | Başla / tekrar |
 | + / − | Yakınlaştır / uzaklaştır |
 
 Dokunmatik cihazlarda ekran düğmeleri çıkar.
+
+## Özellikler
+
+- Sınav görevlisinin Türkçe sesli ve yazılı komutları
+- Her aşamada süre sınırı, sonuçta aşama aşama süreler ve en iyi süre rekoru
+- Hata anında motor yatma, sarsıntı ve kırmızı uyarı; düşük hızda gidon salınımı
+- Virajda bakış dönüş yönüne kayar
+- Rüzgâr, lastik ve fren, çarpma sesleri
+- Grafik ayarı (Yüksek / Düşük), telefonda sinyal/korna/far/görünüm düğmeleri
 
 ## Kurallar
 
