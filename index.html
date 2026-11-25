@@ -779,6 +779,8 @@ function init3d(){
     s.moveTo(x0+cr,y0);s.lineTo(x0+iw-cr,y0);s.quadraticCurveTo(x0+iw,y0,x0+iw,y0+cr);s.lineTo(x0+iw,y0+ih-cr);s.quadraticCurveTo(x0+iw,y0+ih,x0+iw-cr,y0+ih);
     s.lineTo(x0+cr,y0+ih);s.quadraticCurveTo(x0,y0+ih,x0,y0+ih-cr);s.lineTo(x0,y0+cr);s.quadraticCurveTo(x0,y0,x0+cr,y0);
     const dd=Math.max(.0005,d-2*r),g=new THREE.ExtrudeGeometry(s,{depth:dd,bevelEnabled:true,bevelSize:r,bevelThickness:r,bevelSegments:3,curveSegments:5});g.translate(0,0,-dd/2);g.computeVertexNormals();return g;};
+  const soft=(pts,depth,bev)=>{const sh=new THREE.Shape();sh.moveTo(pts[0][0],pts[0][1]);sh.splineThru(pts.slice(1).concat([pts[0]]).map(p=>new THREE.Vector2(p[0],p[1])));
+    const g=new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:true,bevelSize:bev,bevelThickness:bev,bevelSegments:6,curveSegments:48});g.translate(0,0,-depth/2);g.computeVertexNormals();return g;};
   const tube2=(a,b2,r1,r2,mat,par)=>{const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b2),dir=B.clone().sub(A),len=dir.length();
     const m=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,len,18),mat);m.position.copy(A).add(B).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());par.add(m);return m;};
   const gripGeo=(len,r)=>{const p=[new THREE.Vector2(.0001,0),new THREE.Vector2(r*1.22,0),new THREE.Vector2(r*1.22,.005),new THREE.Vector2(r,.008)];
@@ -807,9 +809,9 @@ function init3d(){
     const t=canvasTex(c);t.anisotropy=aniso;return new THREE.MeshStandardMaterial({map:t,roughness:.5});};
 
   // center bar, clamps, top yoke, ignition, forks
-  tube2([-.12,0,0],[.12,0,0],.0145,.0145,anod,steerG);
-  [1,-1].forEach(sd=>{mesh(rbox(.04,.036,.052,.006),alu,steerG,sd*.06,.004,0);
-    [[-.012,-.017],[.012,-.017],[-.012,.017],[.012,.017]].forEach(([dx,dz])=>mesh(new THREE.CylinderGeometry(.0048,.0048,.006,6),chrome,steerG,sd*.06+dx,.025,dz));
+  tube2([-.12,0,0],[.12,0,0],.0165,.0165,anod,steerG);
+  [1,-1].forEach(sd=>{mesh(rbox(.046,.042,.056,.007),anod,steerG,sd*.06,.004,0);mesh(rbox(.048,.006,.058,.002),Std(0xc8202a,{metalness:.5,roughness:.3}),steerG,sd*.06,-.016,0);
+    [[-.012,-.017],[.012,-.017],[-.012,.017],[.012,.017]].forEach(([dx,dz])=>mesh(new THREE.CylinderGeometry(.0048,.0048,.006,6),chrome,steerG,sd*.06+dx,.028,dz));
     mesh(new THREE.CylinderGeometry(.014,.017,.04,16),alu,steerG,sd*.06,-.032,0);
     mesh(new THREE.CylinderGeometry(.031,.031,.022,20),anod,steerG,sd*.1,-.045,-.03);
     mesh(new THREE.CylinderGeometry(.012,.012,.012,6),fork,steerG,sd*.1,-.03,-.03);
@@ -828,7 +830,7 @@ function init3d(){
   const parts={},grip=gripGeo(.14,.0185),fingerG=new THREE.TorusGeometry(.026,.0088,8,18,Math.PI*1.2);fingerG.rotateY(Math.PI/2);
   [1,-1].forEach(sd=>{
     const sg=new THREE.Group();sg.scale.x=sd;steerG.add(sg);
-    tube2([.12,0,0],[.25,.04,.05],.0145,.012,anod,sg);mesh(new THREE.SphereGeometry(.0145,14,10),anod,sg,.12,0,0);mesh(new THREE.SphereGeometry(.012,14,10),anod,sg,.25,.04,.05);
+    tube2([.12,0,0],[.25,.04,.05],.0165,.0128,anod,sg);mesh(new THREE.SphereGeometry(.0165,16,12),anod,sg,.12,0,0);mesh(new THREE.SphereGeometry(.0128,16,12),anod,sg,.25,.04,.05);
     const of=new THREE.Group();of.position.copy(ofPos);of.quaternion.copy(qD);sg.add(of);
     tube2([0,0,0],[.27,0,0],.011,.011,anod,of);
     const pc=mesh(new THREE.CylinderGeometry(.02,.02,.024,20),satin,of,.045,0,0);pc.rotation.z=Math.PI/2;
@@ -882,20 +884,30 @@ function init3d(){
   const rt=new THREE.WebGLRenderTarget(512,200),rearCam=new THREE.PerspectiveCamera(30,512/200,.1,900);rearCam.rotation.order='YXZ';
   const mirM=new THREE.MeshBasicMaterial({map:rt.texture});
   [1,-1].forEach(sd=>{
-    tube([sd*.29,.07,.05],[sd*.44,.2,-.1],.007,chrome,steerG);
-    const hs=add(new THREE.CylinderGeometry(.058,.058,.026,28),blk,sd*.47,.23,-.105,steerG);hs.rotation.x=Math.PI/2;hs.scale.set(1.45,1,1);
-    const mg2=new THREE.CircleGeometry(.052,28),uv=mg2.attributes.uv;
+    mesh(new THREE.CylinderGeometry(.011,.013,.018,14),blk,steerG,sd*.29,.072,.048);
+    tube2([sd*.29,.08,.048],[sd*.37,.15,-.02],.0085,.0078,blk,steerG);
+    mesh(new THREE.SphereGeometry(.012,14,10),blk,steerG,sd*.37,.15,-.02);
+    tube2([sd*.37,.15,-.02],[sd*.44,.205,-.085],.0078,.007,blk,steerG);
+    const mh=new THREE.Group();mh.position.set(sd*.47,.225,-.095);mh.rotation.set(0,sd*.12,sd*.05);steerG.add(mh);
+    mesh(rbox(.135,.072,.03,.012),blk,mh,0,0,-.012);
+    const mg2=new THREE.PlaneGeometry(.118,.056),uv=mg2.attributes.uv;
     for(let i=0;i<uv.count;i++)uv.setX(i,sd<0?1-.5*uv.getX(i):.5-.5*uv.getX(i));
-    const gl=new THREE.Mesh(mg2,mirM);gl.position.set(sd*.47,.23,-.091);gl.scale.set(1.45,1,1);steerG.add(gl);
+    mesh(mg2,mirM,mh,0,0,.0035);
   });
 
   // instrument cluster
   const dash=document.createElement('canvas');dash.width=512;dash.height=256;const dg=dash.getContext('2d'),dt=canvasTex(dash);dt.anisotropy=aniso;
-  const cl=new THREE.Group();cl.position.set(0,.1,-.07);cl.rotation.x=-.75;steerG.add(cl);
-  mesh(rbox(.27,.15,.05,.012),blk,cl,0,0,-.026);
-  const face=new THREE.Mesh(new THREE.PlaneGeometry(.23,.115),new THREE.MeshBasicMaterial({map:dt}));face.position.z=.0005;cl.add(face);
-  mesh(rbox(.27,.01,.05,.004),satin,cl,0,.078,.01);
-  const tank=add(new THREE.SphereGeometry(1,32,20),paint,0,-.22,-.16,ck);tank.scale.set(.19,.12,.3);
+  const cowlM=Std(0x8e1a21,{metalness:.45,roughness:.32});
+  const cl=new THREE.Group();cl.position.set(0,.085,-.12);cl.rotation.x=-.85;steerG.add(cl);
+  // headlight cowl the dash is set into
+  mesh(soft([[-.12,-.095],[.12,-.095],[.155,-.03],[.15,.045],[.105,.075],[-.105,.075],[-.15,.045],[-.155,-.03]],.06,.012),cowlM,cl,0,-.012,-.056);
+  // dash housing and screen
+  mesh(rbox(.21,.11,.03,.01),blk,cl,0,.0,-.006);
+  mesh(new THREE.PlaneGeometry(.19,.094),new THREE.MeshBasicMaterial({map:dt}),cl,0,0,.0095);
+  // short smoked flyscreen
+  const fs=mesh(soft([[-.12,0],[.12,0],[.1,.085],[0,.095],[-.1,.085]],.003,.002),new THREE.MeshStandardMaterial({color:lin(0x2a3138),transparent:true,opacity:.55,roughness:.05,metalness:.4,side:THREE.DoubleSide,depthWrite:false}),cl,0,.07,-.04);fs.rotation.x=-.35;
+  // dash bracket down to the top triple clamp
+  [1,-1].forEach(sd=>tube2([sd*.045,-.05,-.05],[sd*.045,.035,-.13],.0055,.0055,blk,steerG));
   ck.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
 
   R3={renderer,scene,cam3,sky,clouds,tex,steerG,dg,dt,rt,rearCam,ck,parts,frame:0,w:0,h:0,lean:0,pitch:0,thr:0,brk:0};
