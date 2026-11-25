@@ -1,6 +1,6 @@
 # Motosiklet Direksiyon Sınavı – Tarayıcı Oyunu
 
-Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi" (EK-7) temel alınarak yapılmış, kuşbakışı HTML5 oyunu. Tek dosya (`index.html`), kurulum gerektirmez.
+Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi" (EK-7) temel alınarak yapılmış, kuşbakışı HTML5 oyunu. Tek dosya (`index.html`), kurulum gerektirmez. Kuşbakışı ve 3D sürücü gözü (three.js) görünümleri vardır; `V` tuşuyla geçilir.
 
 ## Oynamak
 
@@ -24,6 +24,7 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 | ↑ / W | Gaz |
 | ↓ / S / Boşluk | Fren |
 | ← → / A D | Direksiyon |
+| V | Kuşbakışı / sürücü gözü |
 | R | Aşamayı baştan al |
 | + / − | Yakınlaştır / uzaklaştır |
 

@@ -15,7 +15,16 @@
 :root{color-scheme:dark;--blue:#1f5fbf;--red:#e03131;--yel:#f5c400;--ink:#f4f5f7;--panel:rgba(16,20,28,.86)}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0;height:100%;overflow:hidden;background:#2f3338;color:var(--ink);font:15px/1.45 Barlow,system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
-canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+canvas#c,canvas#c3{position:fixed;inset:0;width:100%;height:100%;display:block}
+#c3{display:none}
+body.fpv #c{display:none}body.fpv #c3{display:block}
+#cockpit{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(800px,105vw);z-index:1;margin-bottom:-40px;pointer-events:none;display:none}
+body.fpv #cockpit{display:block}
+#bar{transform-origin:500px 330px;transition:transform .05s linear}
+#needle{transform-origin:500px 205px}
+#dir{top:136px;left:50%;width:64px;height:64px;margin-left:-32px;display:none;place-items:center;font-size:40px;color:var(--yel);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+body.fpv #dir.on{display:grid}
+.vbtn{pointer-events:auto;margin-top:6px;min-height:36px;padding:0 12px;border-radius:8px;border:2px solid #3a4656;background:#1c2430;color:#fff;font:600 15px "Barlow Condensed",sans-serif;cursor:pointer}
 .hud{position:fixed;pointer-events:none;z-index:2}
 .panel{background:var(--panel);border-radius:10px;padding:10px 14px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
 .cond{font-family:"Barlow Condensed",sans-serif}
@@ -52,15 +61,42 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
 .keys{font-size:14px;color:#9aa3ad;margin-top:12px}.keys kbd{background:#2a3340;border-radius:4px;padding:1px 6px;color:#fff;font:600 13px Barlow,sans-serif}
 #res ul{padding-left:18px;margin:8px 0;color:#ffb3b3}
 .hide{display:none!important}
-@media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
+@media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){body.fpv #gauge{bottom:auto;top:96px}#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<canvas id="c3"></canvas>
+<svg id="cockpit" viewBox="0 0 1000 340" aria-hidden="true">
+  <defs>
+    <linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b4048"/><stop offset="1" stop-color="#14171b"/></linearGradient>
+    <linearGradient id="gt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e03131"/><stop offset="1" stop-color="#8c1515"/></linearGradient>
+  </defs>
+  <path d="M300 340 Q330 250 420 238 L580 238 Q670 250 700 340Z" fill="url(#gt)"/>
+  <path d="M380 340 Q400 285 450 280 L550 280 Q600 285 620 340Z" fill="#1a1d22"/>
+  <g id="bar">
+    <path d="M120 250 Q300 205 440 222 L560 222 Q700 205 880 250" fill="none" stroke="#2a2e34" stroke-width="22" stroke-linecap="round"/>
+    <path d="M120 250 Q300 205 440 222 L560 222 Q700 205 880 250" fill="none" stroke="#6c737c" stroke-width="5" stroke-linecap="round" opacity=".6"/>
+    <rect x="60" y="232" width="110" height="40" rx="18" fill="#111" transform="rotate(-10 115 252)"/>
+    <rect x="830" y="232" width="110" height="40" rx="18" fill="#111" transform="rotate(10 885 252)"/>
+    <path d="M210 228 L170 120" stroke="#222" stroke-width="8"/><path d="M790 228 L830 120" stroke="#222" stroke-width="8"/>
+    <ellipse cx="160" cy="100" rx="62" ry="38" fill="#1b1e22"/><ellipse cx="160" cy="100" rx="52" ry="29" fill="#8fb3cf"/>
+    <ellipse cx="840" cy="100" rx="62" ry="38" fill="#1b1e22"/><ellipse cx="840" cy="100" rx="52" ry="29" fill="#8fb3cf"/>
+    <path d="M410 245 Q500 120 590 245Z" fill="url(#gm)"/>
+    <circle cx="500" cy="205" r="62" fill="#0e1013" stroke="#555c66" stroke-width="5"/>
+    <g fill="#cfd4da" font-family="Barlow Condensed,sans-serif" font-size="13" text-anchor="middle">
+      <text x="452" y="242">0</text><text x="447" y="185">20</text><text x="475" y="157">40</text><text x="525" y="157">60</text><text x="553" y="185">80</text><text x="548" y="242">100</text>
+    </g>
+    <line id="needle" x1="500" y1="205" x2="500" y2="155" stroke="#ff4d4d" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="500" cy="205" r="7" fill="#ff4d4d"/>
+    <text id="ckSpd" x="500" y="238" fill="#fff" font-family="Barlow Condensed,sans-serif" font-weight="800" font-size="22" text-anchor="middle">0</text>
+  </g>
+</svg>
+<div id="dir" class="hud">▲</div>
 
 <div id="stages" class="hud panel"><ol id="slist"></ol></div>
 <div id="task" class="hud panel"><h2 id="tname">Hazır</h2><p id="tinfo"></p><div class="prog" id="tprog"></div></div>
-<div id="gauge" class="hud panel"><div id="spd">0 <small>km/h</small></div><div id="meta"></div></div>
+<div id="gauge" class="hud panel"><div id="spd">0 <small>km/h</small></div><div id="meta"></div><button class="vbtn" id="vBtn">Sürücü gözü (V)</button></div>
 <canvas id="mini" width="210" height="150"></canvas>
 <div id="toast" class="hud"></div>
 
@@ -75,8 +111,9 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
     <p>Resmi krokideki 7 aşamayı sırayla tamamla: slalom, sekiz çizme, denge çizgisi, dar alanda U dönüşü, hızlanıp durma, engelden kaçış ve ani fren.</p>
     <div class="opt"><b>Sertifika sınıfı</b><div class="seg" data-o="cls"><button>M</button><button>A1</button><button class="on">A2</button><button>A</button><button>B1</button></div></div>
     <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
+    <div class="opt"><b>Görünüş</b><div class="seg" data-o="view"><button data-v="top">Kuşbakışı</button><button class="on" data-v="fpv">Sürücü gözü</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys"><kbd>↑</kbd>/<kbd>W</kbd> gaz · <kbd>↓</kbd>/<kbd>S</kbd> fren · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> direksiyon · <kbd>R</kbd> aşamayı baştan al · <kbd>+</kbd>/<kbd>−</kbd> yakınlaştır. Aşamalar sırasında hız 2 km/h'nin altına düşerse ayak yere değmiş sayılır.</div>
+    <div class="keys"><kbd>↑</kbd>/<kbd>W</kbd> gaz · <kbd>↓</kbd>/<kbd>S</kbd> fren · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> direksiyon · <kbd>V</kbd> görünüş · <kbd>R</kbd> aşamayı baştan al · <kbd>+</kbd>/<kbd>−</kbd> yakınlaştır. Aşamalar sırasında hız 2 km/h'nin altına düşerse ayak yere değmiş sayılır.</div>
     <button class="go" id="goBtn">Sınava Başla</button>
   </div>
 </div>
@@ -90,12 +127,13 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 {
-const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const mini=document.getElementById('mini'),mctx=mini.getContext('2d');
 const $=id=>document.getElementById(id);
-const opts={cls:'A2',mode:'sinav',diff:'easy'};
+const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv'};
 document.querySelectorAll('.seg').forEach(seg=>{
   seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -236,6 +274,7 @@ function placeAt(i){
 function newGame(){
   setRules();si=0;faults=[];time=0;placeAt(0);cam.x=b.x;cam.y=b.y;running=true;freeze=0;
   $('start').classList.add('hide');$('res').classList.add('hide');buildList();
+  applyView();
 }
 function buildList(){
   $('slist').innerHTML=S.map((s,i)=>`<li class="${i<si?'done':i===si?'cur':''}"><i>${i<si?'✓':i+1}</i>${s.name}</li>`).join('');
@@ -301,7 +340,7 @@ function cone(x,y){ctx.beginPath();ctx.ellipse(x+.12,y+.14,.36,.3,0,0,7);ctx.fil
   ctx.fillStyle='#1d1d1d';ctx.fillRect(x-.32,y-.32,.64,.64);
   ctx.beginPath();ctx.arc(x,y,.26,0,7);ctx.fillStyle='#ff6a13';ctx.fill();ctx.beginPath();ctx.arc(x,y,.16,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(x,y,.08,0,7);ctx.fillStyle='#ff6a13';ctx.fill();}
 
-function drawWorld(){
+function drawWorld(forTex){
   // grass + pad
   ctx.fillStyle='#4f7a3c';ctx.fillRect(-60,-60,200,180);
   ctx.fillStyle='#4a4e54';ctx.fillRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
@@ -314,7 +353,7 @@ function drawWorld(){
 
   // Slalom
   for(let i=0;i<7;i++){line([[9+6*i,43.3],[13+6*i,43.3]],.06,'#ff6b6b');text('6 m',11+6*i,43.9,.7,'#ffc9c9');}
-  CONES.forEach(c=>cone(c[0],c[1]));
+  if(!forTex)CONES.forEach(c=>cone(c[0],c[1]));
   text('SLALOM',29,45.2,1.2,'#fff');
   line([[4,40],[4,44]],.15,'#fff');text('BAŞLA',3.2,39.4,.7,'#fff');
 
@@ -406,9 +445,10 @@ function render(){
   const sc=Math.max(14,Math.min(W,H)/d/24)*zoom*d;
   const la=Math.min(b.v*.6,6);
   cam.x+=(b.x+Math.cos(b.th)*la-cam.x)*.08;cam.y+=(b.y+Math.sin(b.th)*la-cam.y)*.08;
-  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
+  if(opts.view==='fpv'&&R3){render3d();}
+  else{ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
   ctx.setTransform(sc,0,0,sc,W/2-cam.x*sc,H/2-cam.y*sc);
-  drawWorld();drawGuide();drawBike();
+  drawWorld();drawGuide();drawBike();}
   drawMini();
   // HUD
   const s=S[si]||S[S.length-1];
@@ -418,6 +458,87 @@ function render(){
   $('spd').firstChild.nodeValue=Math.round(kmh(b.v))+' ';
   $('meta').textContent=`${opts.cls} · ${opts.mode==='sinav'?'Sınav':'Antrenman'} · ${time.toFixed(1)} sn${opts.mode==='antrenman'?` · ${faults.length} hata`:''}`;
 }
+
+/* ---------- 3D driver view ---------- */
+let R3=null,texKey='';
+function init3d(){
+  if(R3)return true;
+  if(!window.THREE)return false;
+  const c3=$('c3');
+  let renderer;try{renderer=new THREE.WebGLRenderer({canvas:c3,antialias:true});}catch(e){return false;}
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0xa9cdea);scene.fog=new THREE.Fog(0xa9cdea,45,160);
+  const cam3=new THREE.PerspectiveCamera(72,1,.05,500);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x5a7a48,.85));
+  const sun=new THREE.DirectionalLight(0xfff4e0,.65);sun.position.set(40,70,20);scene.add(sun);
+  const L=c=>new THREE.MeshLambertMaterial({color:c});
+  const grass=new THREE.Mesh(new THREE.PlaneGeometry(800,800),L(0x557f40));grass.rotation.x=-Math.PI/2;grass.position.y=-.03;scene.add(grass);
+  const gcv=document.createElement('canvas');const tex=new THREE.CanvasTexture(gcv);
+  tex.anisotropy=renderer.capabilities.getMaxAnisotropy();
+  const pw=WB.x1-WB.x0,ph=WB.y1-WB.y0;
+  const pad=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshLambertMaterial({map:tex}));
+  pad.rotation.x=-Math.PI/2;pad.position.set((WB.x0+WB.x1)/2,0,(WB.y0+WB.y1)/2);scene.add(pad);
+  const add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);scene.add(m);return m;};
+  // cones
+  const cOr=L(0xff6a13),cW=L(0xffffff),cB=L(0x1d1d1d);
+  const gBase=new THREE.BoxGeometry(.48,.04,.48),gCone=new THREE.ConeGeometry(.17,.55,20),gBand=new THREE.CylinderGeometry(.09,.115,.09,20);
+  CONES.forEach(([x,y])=>{add(gBase,cB,x,.02,y);add(gCone,cOr,x,.31,y);add(gBand,cW,x,.33,y);});
+  // obstacle bar
+  add(new THREE.BoxGeometry(.3,.14,1),L(0x111111),41,.07,6);
+  add(new THREE.BoxGeometry(.3,.05,1),L(0xf5c400),41,.025,5);add(new THREE.BoxGeometry(.3,.05,1),L(0xf5c400),41,.025,7);
+  // finish gate
+  const blue=L(0x1f5fbf),grey=L(0x9aa3ad);
+  add(new THREE.CylinderGeometry(.06,.06,2.6,10),grey,37.2,1.3,-4.2);add(new THREE.CylinderGeometry(.06,.06,2.6,10),grey,37.2,1.3,.2);
+  const sc=document.createElement('canvas');sc.width=512;sc.height=128;const sg=sc.getContext('2d');
+  sg.fillStyle='#1f5fbf';sg.fillRect(0,0,512,128);sg.fillStyle='#fff';sg.font='800 84px "Barlow Condensed",sans-serif';sg.textAlign='center';sg.textBaseline='middle';sg.fillText('BİTİŞ',256,68);
+  const sign=add(new THREE.PlaneGeometry(4.4,1.1),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(sc),side:THREE.DoubleSide}),37.2,2.4,-2);sign.rotation.y=-Math.PI/2;
+  // stop zone posts
+  [[60,12.5],[64,12.5],[60,15.5],[64,15.5]].forEach(([x,y])=>add(new THREE.CylinderGeometry(.05,.05,1,8),L(0xe03131),x,.5,y));
+  // fence posts around pad
+  const post=new THREE.CylinderGeometry(.05,.05,.9,6),pm=L(0xeeeeee);
+  for(let x=WB.x0;x<=WB.x1;x+=3){add(post,pm,x,.45,WB.y0-.6);add(post,pm,x,.45,WB.y1+.6);}
+  for(let y=WB.y0;y<=WB.y1;y+=3){add(post,pm,WB.x0-.6,.45,y);add(post,pm,WB.x1+.6,.45,y);}
+  // trees and buildings
+  const trunk=new THREE.CylinderGeometry(.2,.28,2,8),crown=new THREE.ConeGeometry(1.6,4,10),tm=L(0x6b4a2b),cm=L(0x2f6b33);
+  let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  for(let i=0;i<90;i++){const a=rnd()*Math.PI*2,r=58+rnd()*45,x=34+Math.cos(a)*r,z=20+Math.sin(a)*r*.8;add(trunk,tm,x,1,z);add(crown,cm,x,3.8,z);}
+  const bm=[L(0xd9d2c3),L(0xb8c4cc),L(0xcfa98a)];
+  for(let i=0;i<14;i++){const a=i/14*Math.PI*2,r=118,h=6+rnd()*14;add(new THREE.BoxGeometry(14,h,10),bm[i%3],34+Math.cos(a)*r,h/2,20+Math.sin(a)*r*.85);}
+  R3={renderer,scene,cam3,tex,gcv,w:0,h:0};
+  return true;
+}
+function buildGroundTex(){
+  const key=[UH,T.brake,target].join();if(key===texKey)return;texKey=key;
+  const s=24,g=R3.gcv;g.width=(WB.x1-WB.x0)*s;g.height=(WB.y1-WB.y0)*s;
+  const old=ctx;ctx=g.getContext('2d');ctx.setTransform(s,0,0,s,-WB.x0*s,-WB.y0*s);drawWorld(true);ctx=old;
+  R3.tex.needsUpdate=true;
+}
+function render3d(){
+  const{renderer,scene,cam3}=R3;
+  if(R3.w!==innerWidth||R3.h!==innerHeight){R3.w=innerWidth;R3.h=innerHeight;renderer.setSize(innerWidth,innerHeight,false);cam3.aspect=innerWidth/innerHeight;}
+  cam3.fov=70+Math.min(12,kmh(b.v)*.25);cam3.updateProjectionMatrix();
+  const c=Math.cos(b.th),s=Math.sin(b.th),hx=b.x+c*.15,hz=b.y+s*.15;
+  cam3.position.set(hx,1.35,hz);cam3.lookAt(hx+c*10,.85,hz+s*10);
+  cam3.rotateZ(-b.steer*Math.min(1,b.v/5)*.3);
+  renderer.render(scene,cam3);
+  $('bar').style.transform=`rotate(${(b.steer*Math.max(.25,1-b.v/14)*16).toFixed(2)}deg)`;
+  $('needle').style.transform=`rotate(${(-120+Math.min(100,kmh(b.v))/100*240).toFixed(1)}deg)`;
+  $('ckSpd').textContent=Math.round(kmh(b.v));
+  const d=$('dir');
+  if(!active&&running&&si<S.length){const g=si===3?uGoal():S[si].goal,dx=g[0]-b.x,dy=g[1]-b.y;
+    if(hyp(dx,dy)>4){d.classList.add('on');d.style.transform=`rotate(${(wrap(Math.atan2(dy,dx)-b.th)*180/Math.PI).toFixed(1)}deg)`;}else d.classList.remove('on');}
+  else d.classList.remove('on');
+}
+function applyView(){
+  if(opts.view==='fpv'){
+    if(!init3d()){opts.view='top';toast('3D görünüm bu tarayıcıda açılamadı','bad');}
+    else buildGroundTex();
+  }
+  document.body.classList.toggle('fpv',opts.view==='fpv');
+  $('vBtn').textContent=opts.view==='fpv'?'Kuşbakışı (V)':'Sürücü gözü (V)';
+}
+function toggleView(){opts.view=opts.view==='fpv'?'top':'fpv';applyView();}
+$('vBtn').addEventListener('click',e=>{toggleView();e.currentTarget.blur();});
 
 let last=performance.now();
 function loop(now){
@@ -435,6 +556,7 @@ const km={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',Space:'brake',
 addEventListener('keydown',e=>{
   if(km[e.code]){key[km[e.code]]=1;e.preventDefault();}
   if(e.code==='KeyR'&&running){placeAt(si);freeze=.3;}
+  if(e.code==='KeyV')toggleView();
   if(e.key==='+'||e.key==='=')zoom=Math.min(2.5,zoom*1.15);
   if(e.key==='-'||e.key==='_')zoom=Math.max(.4,zoom/1.15);
   if(e.code==='Enter'&&!running)newGame();
