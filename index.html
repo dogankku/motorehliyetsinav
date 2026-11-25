@@ -74,6 +74,13 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 #spad i{position:absolute;top:50%;left:50%;width:78px;height:78px;margin:-39px 0 0 -39px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .08s}
 #spad::before,#spad::after{position:absolute;top:50%;transform:translateY(-50%);font:800 22px Barlow,sans-serif;color:rgba(255,255,255,.6)}#spad::before{content:'◀';left:14px}#spad::after{content:'▶';right:14px}
 #spad.tilt{opacity:.35}
+#joy{position:relative;width:160px;height:160px;border-radius:50%;display:none;touch-action:none;pointer-events:auto;
+  background:radial-gradient(circle,rgba(255,255,255,.08) 0 34%,rgba(255,255,255,.16) 35% 36%,rgba(255,255,255,.07) 37% 100%);border:2px solid rgba(255,255,255,.28);box-shadow:inset 0 0 18px rgba(0,0,0,.35)}
+#joy i{position:absolute;top:50%;left:50%;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c9ced3 60%,#8d949b);box-shadow:0 5px 14px rgba(0,0,0,.45)}
+#joy::before,#joy::after{position:absolute;left:50%;transform:translateX(-50%);font:800 12px "Barlow Condensed",sans-serif;color:rgba(255,255,255,.75)}
+#joy::before{content:'GAZ ▲';top:7px}#joy::after{content:'▼ FREN';bottom:7px}
+#joy b{position:absolute;top:50%;transform:translateY(-50%);font:800 16px Barlow,sans-serif;color:rgba(255,255,255,.6)}
+body.joy #joy{display:block}body.joy #spad{display:none}
 #rot{position:fixed;inset:0;z-index:9;display:none;place-items:center;text-align:center;background:#0d1117;color:#fff;padding:24px;font:600 18px Barlow,sans-serif}
 #rot b{display:block;font:800 30px "Barlow Condensed",sans-serif;margin-bottom:8px}
 .touchOnly{display:none}
@@ -112,7 +119,7 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 <div id="rot"><div><b>Telefonu yan çevir</b>Sınav yatay ekranda oynanır.</div></div>
 
 <div id="touch">
-  <div><div id="spad" aria-label="Direksiyon"><i></i></div></div>
+  <div><div id="joy" aria-label="Joystick"><i></i></div><div id="spad" aria-label="Direksiyon"><i></i></div></div>
   <div class="tmid"><button data-a="q">◀ Sinyal</button><button data-a="e">Sinyal ▶</button><button data-a="h">Korna</button><button data-a="l">Far</button><button data-a="g">Aşağı bak</button><button data-a="v">Görünüş</button></div>
   <div><button data-k="brake" aria-label="Fren">FREN</button><button data-k="gas" aria-label="Gaz">GAZ</button></div>
 </div>
@@ -124,10 +131,10 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
     <div class="opt"><b>Sertifika sınıfı</b><div class="seg" data-o="cls"><button>M</button><button>A1</button><button class="on">A2</button><button>A</button><button>B1</button></div></div>
     <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
     <div class="opt"><b>Görünüş</b><div class="seg" data-o="view"><button data-v="top">Kuşbakışı</button><button class="on" data-v="fpv">Sürücü gözü</button></div></div>
-    <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
+    <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="joy">Joystick</button><button data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
     <div class="opt"><b>Grafik</b><div class="seg" data-o="gfx"><button class="on" data-v="high">Yüksek</button><button data-v="low">Düşük · zayıf cihazlar için</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Sol başparmağınla alttaki direksiyon alanını sağa sola kaydır (ne kadar kaydırırsan o kadar döner). Sağdaki GAZ ve FREN düğmelerini basılı tut. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
+    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Joystick: sol alttaki topu sağa sola it, direksiyon döner; yukarı it gaz, aşağı çek fren (ne kadar itersen o kadar). Sağdaki GAZ ve FREN düğmeleri de çalışır. İstersen "Ekranda kaydır" ile sadece direksiyon şeridi kullanabilirsin. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
     <div class="keys keysOnly">
       <b>Tuşlar</b>
       <div class="kgrid">
@@ -166,7 +173,7 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const mini=document.getElementById('mini'),mctx=mini.getContext('2d');
 const $=id=>document.getElementById(id);
-const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high',steer:'pad'};
+const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high',steer:'joy'};
 document.querySelectorAll('.seg').forEach(seg=>{
   seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -323,7 +330,8 @@ function route(){return[
 let b,si,active,st,faults,time,running=false,freeze=0,footT=0,zoom=1,cam={x:0,y:0},endInfo=null;
 const key={gas:0,brake:0,left:0,right:0};
 let ind=0,hb=false,horn=false,blinkOn=false,blinkT=0,lookKey=false;
-let stageTimes=[],stT=0,crash=null,crashTok=0,steerAnalog=null,tiltZero=null;
+let stageTimes=[],stT=0,crash=null,crashTok=0,steerAnalog=null,tiltZero=null,gasAnalog=0,brakeAnalog=0;
+const GAS=()=>key.gas?1:gasAnalog,BRK=()=>key.brake?1:brakeAnalog;
 const TL=[45,60,40,40,40,30,30];
 const limitOf=i=>Math.round(TL[i]*(opts.diff==='easy'?1.5:1));
 const CMD=['Slalom. Konilerin arasından sırayla geçin.','Sekiz çizme. Önce birinci çember, sonra ikinci.','Denge çizgisi. Yavaş ve dengeli geçin.','Dar alanda U dönüşü yapın.','Hızlanın.','Hıza çıkın, engelden kaçmaya hazırlanın.','Hızlanın, kırmızı çizgide fren yapın.'];
@@ -394,7 +402,8 @@ function step(dt){
   const steerT=key.left||key.right?key.right-key.left:(steerAnalog!=null?steerAnalog:0);
   b.steer+=(steerT-b.steer)*Math.min(1,dt*5);
   let a;
-  if(key.brake)a=-7.5;else if(key.gas)a=3.3*(1-b.v/22);else a=-.35-.004*b.v*b.v;
+  const gv=GAS(),bv=BRK();
+  if(bv>0)a=-7.5*bv-.35;else if(gv>0)a=3.3*gv*(1-b.v/22)+(-.35-.004*b.v*b.v)*(1-gv);else a=-.35-.004*b.v*b.v;
   b.v=Math.max(0,b.v+a*dt);
   const R=Math.max(2,b.v*b.v/5);
   b.th+=b.v*(b.steer/R)*dt;
@@ -696,7 +705,7 @@ function drawDash(dg,v,rpm,gear){
   dg.fillStyle='#3a2a0a';dg.beginPath();dg.arc(360,225,9,0,7);dg.fill();
 }
 const GEARS=[[0,18],[18,32],[32,46],[46,60],[60,99]];
-function engine(){const k=kmh(b.v);if(k<1)return{gear:'N',rpm:1300+(key.gas?1600:0)};let i=0;while(i<4&&k>GEARS[i][1])i++;const[lo,hi]=GEARS[i];return{gear:String(i+1),rpm:(i?3400:1500)+(k-lo)/(hi-lo)*(i?5000:6600)};}
+function engine(){const k=kmh(b.v);if(k<1)return{gear:'N',rpm:1300+GAS()*1600};let i=0;while(i<4&&k>GEARS[i][1])i++;const[lo,hi]=GEARS[i];return{gear:String(i+1),rpm:(i?3400:1500)+(k-lo)/(hi-lo)*(i?5000:6600)};}
 
 let AU=null,muted=false;
 function initAudio(){
@@ -722,7 +731,7 @@ function updAudio(rpm,thr){
   AU.hg.gain.setTargetAtTime(horn&&!muted?.06:0,t,.01);
   const v=b?b.v:0,on=!muted&&running;
   AU.wg.gain.setTargetAtTime(on?Math.min(.09,(v/14)**2*.09):0,t,.15);AU.wf.frequency.setTargetAtTime(300+v*40,t,.2);
-  AU.sgn.gain.setTargetAtTime(on&&key.brake&&v>3?.025*Math.min(1,(v-3)/5):0,t,.05);
+  AU.sgn.gain.setTargetAtTime(on&&BRK()>.5&&v>3?.025*BRK()*Math.min(1,(v-3)/5):0,t,.05);
 }
 function tick(){if(!AU||muted)return;const A=AU.A,t=A.currentTime,o=A.createOscillator(),g=A.createGain();o.type='square';o.frequency.value=blinkOn?1800:1350;
   g.gain.setValueAtTime(.035,t);g.gain.exponentialRampToValueAtTime(.0005,t+.03);o.connect(g);g.connect(A.destination);o.start(t);o.stop(t+.04);}
@@ -1020,7 +1029,7 @@ function render3d(){
   if(R.w!==innerWidth||R.h!==innerHeight){R.w=innerWidth;R.h=innerHeight;renderer.setSize(innerWidth,innerHeight,false);cam3.aspect=innerWidth/innerHeight;}
   const om=b.v*b.steer/Math.max(2,b.v*b.v/5);
   R.lean+=(Math.atan(b.v*om/9.81)-R.lean)*.12;
-  const pT=key.brake&&b.v>.3?-.05:(key.gas&&b.v<14?.014:0);R.pitch+=(pT-R.pitch)*.08;
+  const pT=BRK()>0&&b.v>.3?-.05*BRK():(GAS()>0&&b.v<14?.014*GAS():0);R.pitch+=(pT-R.pitch)*.08;
   const t=performance.now()/1000,vib=(Math.sin(t*71)*.6+Math.sin(t*43))*.0011*(.4+Math.min(1,b.v/6));
   const c=Math.cos(b.th),s=Math.sin(b.th),side=Math.sin(R.lean)*.9;
   let xr=0,drop=0,shP=0,shY=0;
@@ -1035,7 +1044,7 @@ function render3d(){
   R.ck.quaternion.copy(qRel);R.ck.position.copy(R.ckOff).applyQuaternion(qRel);
   cam3.fov=68+Math.min(10,kmh(b.v)*.18);cam3.updateProjectionMatrix();
   R.steerG.rotation.y=-b.steer*.42*Math.max(.12,1-b.v/9)+Math.sin(t*4.3)*.05*wob;
-  R.thr+=((key.gas?1:0)-R.thr)*.2;R.brk+=((key.brake?1:0)-R.brk)*.3;
+  R.thr+=(GAS()-R.thr)*.2;R.brk+=(BRK()-R.brk)*.3;
   const pa=R.parts;pa.throttle.rotation.x=R.thr*.5;pa.brakeLever.rotation.y=-R.brk*.2;
   pa.slider.position.x=.1+(ind===-1?.006:ind===1?-.006:0);pa.horn.position.z=.0305-(horn?.0025:0);pa.beam.rotation.x=hb?.35:-.35;
   R.sky.position.copy(cam3.position);
@@ -1075,7 +1084,7 @@ function loop(now){
   }
   if(crash)crash.t+=dt;
   if(ind){blinkT+=dt;if(blinkT>.36){blinkT=0;blinkOn=!blinkOn;tick();}}else{blinkOn=false;blinkT=0;}
-  if(b){render();const e=engine();updAudio(e.rpm,key.gas&&running?1:0);}
+  if(b){render();const e=engine();updAudio(e.rpm,running?GAS():0);}
   requestAnimationFrame(loop);
 }
 
@@ -1112,7 +1121,7 @@ document.querySelectorAll('#touch [data-k]').forEach(btn=>{
   btn.addEventListener('pointerdown',on);btn.addEventListener('pointerup',off);btn.addEventListener('pointercancel',off);btn.addEventListener('pointerleave',off);
 });
 const COARSE=matchMedia('(pointer:coarse)').matches;
-if(COARSE){$('touch').style.display='flex';opts.gfx='low';document.querySelectorAll('[data-o=gfx] button').forEach(x=>x.classList.toggle('on',x.dataset.v==='low'));}
+if(COARSE){$('touch').style.display='flex';document.body.classList.add('joy');opts.gfx='low';document.querySelectorAll('[data-o=gfx] button').forEach(x=>x.classList.toggle('on',x.dataset.v==='low'));}
 const portraitChk=()=>document.body.classList.toggle('portrait',innerHeight>innerWidth);addEventListener('resize',portraitChk);portraitChk();
 {const pad=$('spad'),knob=pad.querySelector('i');let pid=null;
   const upd=e=>{const r=pad.getBoundingClientRect(),v=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(r.width/2-30)));
@@ -1121,6 +1130,16 @@ const portraitChk=()=>document.body.classList.toggle('portrait',innerHeight>inne
   pad.addEventListener('pointermove',e=>{if(e.pointerId===pid)upd(e);});
   const end=e=>{if(e.pointerId!==pid)return;pid=null;if(opts.steer!=='tilt')steerAnalog=0;knob.style.transform='';};
   pad.addEventListener('pointerup',end);pad.addEventListener('pointercancel',end);}
+{const joy=$('joy'),knob=joy.querySelector('i');let pid=null;
+  const upd=e=>{const r=joy.getBoundingClientRect(),R=r.width/2-30;let dx=(e.clientX-(r.left+r.width/2))/R,dy=(e.clientY-(r.top+r.height/2))/R;
+    const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m;}
+    knob.style.transform=`translate(${(dx*R).toFixed(0)}px,${(dy*R).toFixed(0)}px)`;
+    steerAnalog=Math.abs(dx)<.08?0:Math.sign(dx)*(Math.abs(dx)-.08)/.92;
+    gasAnalog=dy<-.15?Math.min(1,(-dy-.15)/.75):0;brakeAnalog=dy>.15?Math.min(1,(dy-.15)/.75):0;};
+  joy.addEventListener('pointerdown',e=>{e.preventDefault();pid=e.pointerId;joy.setPointerCapture(pid);upd(e);});
+  joy.addEventListener('pointermove',e=>{if(e.pointerId===pid)upd(e);});
+  const end=e=>{if(e.pointerId!==pid)return;pid=null;steerAnalog=0;gasAnalog=0;brakeAnalog=0;knob.style.transform='';};
+  joy.addEventListener('pointerup',end);joy.addEventListener('pointercancel',end);}
 function onTilt(e){
   if(opts.steer!=='tilt'||e.beta==null)return;
   const ang=(screen.orientation&&screen.orientation.angle)||window.orientation||0;
@@ -1130,6 +1149,7 @@ function onTilt(e){
   steerAnalog=v;$('spad').querySelector('i').style.transform=`translateX(${(v*80).toFixed(0)}px)`;
 }
 async function startTilt(){
+  document.body.classList.toggle('joy',opts.steer==='joy');
   $('spad').classList.toggle('tilt',opts.steer==='tilt');
   if(opts.steer!=='tilt')return;
   try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')throw 0;}
