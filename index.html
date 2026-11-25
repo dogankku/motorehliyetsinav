@@ -825,27 +825,44 @@ function init3d(){
     const classic=veh==='classic';
     const ck=new THREE.Group();cam3.add(ck);ck.position.set(0,-.36,-.06);
     const steerG=new THREE.Group();ck.add(steerG);steerG.position.set(0,0,-.5);
-    const body=classic?Std(0x9ccabd,{roughness:.22,metalness:.15}):Std(0x3e4349,{roughness:.48,metalness:.35}),
+    const body=classic?Std(0x9ccabd,{roughness:.22,metalness:.15}):Std(0x232528,{roughness:.72,metalness:.12}),
           trim=Std(0x18191c,{roughness:.6}),panel=Std(0x232528,{roughness:.85}),blk=Std(0x18191c,{roughness:.5}),satin=Std(0x34373c,{roughness:.42,metalness:.35}),
           chrome=Std(0xd5d9dd,{metalness:.95,roughness:.15}),alu=Std(0xa3a9af,{metalness:.8,roughness:.3}),anod=Std(0x26282c,{metalness:.6,roughness:.33}),
           glove=Std(0x1e2023,{roughness:.8}),leather=Std(0x2d3036,{roughness:.65}),sleeve=Std(0x2c3138,{roughness:.8}),red=Std(0xc8202a,{roughness:.4}),
           cream=Std(0xeee8d8,{roughness:.5});
     // handlebar cover (turns with the bars)
-    const hsPts=classic?[[-.3,-.05],[0,-.085],[.3,-.05],[.36,0],[.3,.045],[.12,.085],[0,.12],[-.12,.085],[-.3,.045],[-.36,0]]
-                       :[[-.31,-.045],[0,-.075],[.31,-.045],[.36,.01],[.27,.05],[.1,.09],[0,.105],[-.1,.09],[-.27,.05],[-.36,.01]];
-    const hsG=soft(hsPts,classic?.028:.024,.013);hsG.rotateX(-Math.PI/2);
+    const hsPts=classic?[[-.28,-.045],[0,-.07],[.28,-.045],[.345,0],[.28,.035],[.1,.06],[0,.08],[-.1,.06],[-.28,.035],[-.345,0]]
+                       :[[-.15,-.035],[0,-.055],[.15,-.035],[.19,.005],[.13,.05],[0,.065],[-.13,.05],[-.19,.005]];
+    const hsG=soft(hsPts,classic?.024:.02,.012);hsG.rotateX(-Math.PI/2);
     mesh(hsG,body,steerG,0,.03,0);
     if(!classic){
-      // raised instrument hood with the TFT set into its rider-facing slope
-      const pr=[[-.05,0],[-.015,.06],[.04,.066],[.12,.018],[.13,0]],bs=new THREE.Shape();
-      bs.moveTo(...pr[0]);pr.slice(1).forEach(p=>bs.lineTo(...p));bs.lineTo(...pr[0]);
-      const bg=new THREE.ExtrudeGeometry(bs,{depth:.23,bevelEnabled:true,bevelSize:.01,bevelThickness:.01,bevelSegments:5,curveSegments:8});bg.translate(0,0,-.115);bg.rotateY(Math.PI/2);bg.computeVertexNormals();
-      mesh(bg,body,steerG,0,.05,0);
-      const nrm=new THREE.Vector3(0,.504,.863),mid=new THREE.Vector3(0,.05+.03,.0325).addScaledVector(nrm,.0106);
-      const bz=mesh(rbox(.21,.07,.006,.003),trim,steerG,mid.x,mid.y,mid.z);bz.rotation.x=-.528;
-      const scr=new THREE.Mesh(new THREE.PlaneGeometry(.19,.06),new THREE.MeshBasicMaterial({map:null}));scr.position.copy(mid).addScaledVector(nrm,.0034);scr.rotation.x=-.528;steerG.add(scr);
-      var dash=document.createElement('canvas');dash.width=512;dash.height=256;var dt=canvasTex(dash);dt.anisotropy=aniso;scr.material.map=dt;
-      mesh(rbox(.05,.006,.016,.0025),Std(0x9aa0a6,{metalness:.8,roughness:.25}),steerG,0,.124,-.02);
+      // instrument tower: octagon frame with TFT, hood with small LCD and visor lip
+      const frameM=Std(0x3a3d42,{roughness:.5,metalness:.3});
+      const hd=new THREE.Group();hd.position.set(0,.098,.012);hd.rotation.x=-.55;steerG.add(hd);
+      const oct=(w,h,c)=>{const sh=new THREE.Shape(),x=w/2,y=h/2;sh.moveTo(-x+c,-y);sh.lineTo(x-c,-y);sh.lineTo(x,-y+c);sh.lineTo(x,y-c);sh.lineTo(x-c,y);sh.lineTo(-x+c,y);sh.lineTo(-x,y-c);sh.lineTo(-x,-y+c);sh.closePath();return sh;};
+      const fo=oct(.215,.102,.026);fo.holes.push(new THREE.Path(oct(.186,.076,.019).getPoints()));
+      mesh(new THREE.ExtrudeGeometry(fo,{depth:.016,bevelEnabled:true,bevelSize:.003,bevelThickness:.003,bevelSegments:2}),frameM,hd,0,0,0);
+      mesh(new THREE.ExtrudeGeometry(oct(.19,.08,.02),{depth:.01,bevelEnabled:false}),trim,hd,0,0,-.002);
+      var dash=document.createElement('canvas');dash.width=512;dash.height=256;var dt=canvasTex(dash);dt.anisotropy=aniso;
+      mesh(new THREE.PlaneGeometry(.172,.07),new THREE.MeshBasicMaterial({map:dt}),hd,0,0,.0095);
+      mesh(soft([[-.12,.03],[.12,.03],[.136,.07],[.116,.112],[0,.122],[-.116,.112],[-.136,.07]],.05,.013),body,hd,0,0,-.04);
+      mesh(soft([[-.13,-.06],[.13,-.06],[.13,.03],[-.13,.03]],.04,.012),body,hd,0,-.01,-.05);
+      const lc=document.createElement('canvas');lc.width=256;lc.height=96;const lg2=lc.getContext('2d');
+      lg2.fillStyle='#0b0f0d';lg2.fillRect(0,0,256,96);lg2.fillStyle='#d6f5e6';lg2.font='700 40px "Barlow Condensed",sans-serif';lg2.textBaseline='middle';
+      lg2.fillText('12:45',14,34);lg2.textAlign='right';lg2.fillText('18°C',242,34);lg2.font='600 20px Barlow,sans-serif';lg2.textAlign='left';lg2.fillText('ODO 01284 km',14,74);
+      for(let k=0;k<6;k++){lg2.fillStyle=k<4?'#d6f5e6':'#26332d';lg2.fillRect(176+k*11,64,8,20);}
+      const lt=canvasTex(lc);lt.anisotropy=aniso;
+      mesh(new THREE.PlaneGeometry(.1,.0375),new THREE.MeshBasicMaterial({map:lt}),hd,0,.08,.0035);
+      mesh(rbox(.112,.048,.004,.002),trim,hd,0,.08,.0005);
+      const lip=mesh(rbox(.25,.009,.05,.004),body,hd,0,.122,.014);lip.rotation.x=.45;
+      // side arms reaching out to the switchgear, with mirror mounts
+      [1,-1].forEach(sd=>{
+        const wp=[[.1,-.05],[.27,-.06],[.34,-.04],[.355,.012],[.3,.042],[.12,.07]].map(p=>[p[0]*sd,p[1]]);
+        const wg=soft(wp,.026,.012);wg.rotateX(-Math.PI/2);const w=mesh(wg,body,steerG,0,.046,0);w.rotation.z=sd*.04;
+        mesh(rbox(.036,.012,.032,.004),body,steerG,sd*.3,.078,-.005);
+        mesh(new THREE.CylinderGeometry(.0035,.0035,.003,10),chrome,steerG,sd*.335,.073,.025);
+        mesh(new THREE.CylinderGeometry(.0035,.0035,.003,10),chrome,steerG,sd*.2,.07,.045);
+      });
     }else{
       // round speedometer in a chrome bezel on top of the headset, headlamp hump in front
       const g=new THREE.Group();g.position.set(0,.1,.02);g.rotation.x=-1.0;steerG.add(g);
@@ -853,18 +870,18 @@ function init3d(){
       mesh(new THREE.TorusGeometry(.061,.0075,12,48),chrome,g,0,0,.004);
       var dash=document.createElement('canvas');dash.width=dash.height=256;var dt=canvasTex(dash);dt.anisotropy=aniso;
       mesh(new THREE.CircleGeometry(.059,48),new THREE.MeshBasicMaterial({map:dt}),g,0,0,.0035);
-      const hump=mesh(new THREE.SphereGeometry(1,32,20),body,steerG,0,.035,-.09);hump.scale.set(.085,.035,.06);
+      const hump=mesh(new THREE.SphereGeometry(1,32,20),body,steerG,0,.032,-.065);hump.scale.set(.07,.028,.045);
     }
     // front fairing + windscreen (fixed to the scooter)
     if(!classic){
-      const nose=soft([[-.45,.74],[.45,.74],[.39,.93],[.25,1.1],[-.25,1.1],[-.39,.93]],.06,.035);nose.rotateX(-Math.PI/2);
-      const n=mesh(nose,body,ck,0,-.12,0);n.rotation.x=.08;
-      const vent=mesh(rbox(.5,.01,.045,.004),trim,ck,0,-.055,-.79);vent.rotation.x=.08;
+      const nose=soft([[-.3,.8],[.3,.8],[.26,.94],[.16,1.06],[-.16,1.06],[-.26,.94]],.04,.022);nose.rotateX(-Math.PI/2);
+      const n=mesh(nose,body,ck,0,-.17,0);n.rotation.x=.06;
+      const vent=mesh(rbox(.32,.008,.035,.003),trim,ck,0,-.12,-.84);vent.rotation.x=.06;
       const ac=document.createElement('canvas');ac.width=4;ac.height=128;const ag=ac.getContext('2d'),agr=ag.createLinearGradient(0,0,0,128);
       agr.addColorStop(0,'rgb(40,40,40)');agr.addColorStop(.7,'rgb(70,70,70)');agr.addColorStop(1,'rgb(130,130,130)');ag.fillStyle=agr;ag.fillRect(0,0,4,128);
       const atex=new THREE.CanvasTexture(ac);
-      const wsG=new THREE.Group();wsG.position.set(0,.02,-1.04);wsG.rotation.x=.6;ck.add(wsG);
-      const RW=.75,LW=1.0,HW=.22;
+      const wsG=new THREE.Group();wsG.position.set(0,-.05,-1.02);wsG.rotation.x=.6;ck.add(wsG);
+      const RW=.6,LW=.85,HW=.2;
       mesh(new THREE.CylinderGeometry(RW,RW,HW,40,1,true,Math.PI-LW/2,LW),new THREE.MeshStandardMaterial({color:lin(0x7f95a6),transparent:true,alphaMap:atex,roughness:.04,metalness:.4,side:THREE.DoubleSide,depthWrite:false}),wsG,0,HW/2,RW);
       mesh(new THREE.CylinderGeometry(RW+.003,RW+.003,.03,40,1,true,Math.PI-LW/2,LW),new THREE.MeshStandardMaterial({color:lin(0x141518),roughness:.6,side:THREE.DoubleSide}),wsG,0,.015,RW);
     }
@@ -912,7 +929,7 @@ function init3d(){
       tube2([.215,.02,.03],[.19,-.02,.14],.036,.042,leather,hand);
       tube2([.19,-.02,.14],[.12,-.21,.52],.042,.05,sleeve,hand);
       // mirror on the handlebar cover
-      const mb=classic?[.24,.055,-.02]:[.27,.05,0],mt=classic?[.4,.17,-.07]:[.44,.2,-.1];
+      const mb=classic?[.24,.055,-.02]:[.3,.083,-.005],mt=classic?[.4,.17,-.07]:[.44,.21,-.1];
       tube2(mb,mt,.007,.006,classic?chrome:blk,sg);
       const hs=mesh(new THREE.CylinderGeometry(classic?.052:.058,classic?.052:.058,.026,32),classic?chrome:blk,sg,mt[0]+.03,mt[1]+.03,mt[2]-.005);hs.rotation.x=Math.PI/2;hs.scale.set(classic?1:1.45,1,1);
       const mg2=new THREE.CircleGeometry(classic?.046:.052,32),uv=mg2.attributes.uv;
