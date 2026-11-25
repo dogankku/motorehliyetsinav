@@ -7,13 +7,6 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 `index.html` dosyasını tarayıcıda aç. GitHub Pages açıksa şu adresten de oynanabilir:
 `https://<kullanıcı-adı>.github.io/<repo-adı>/`
 
-## Araçlar
-
-- **Maxi scooter (XMAX tarzı):** gidon kaplamasına gömülü dijital ekran, ön kaporta ve füme rüzgârlık
-- **Klasik scooter (Vespa tarzı):** pastel gövde, krom çerçeveli yuvarlak ibreli gösterge
-
-İkisi de otomatik (CVT): vites yok, sol kol arka frendir.
-
 ## Aşamalar
 
 1. **Slalom** – 6 m arayla 8 koni, sırayla sağ-sol
