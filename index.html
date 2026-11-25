@@ -171,7 +171,7 @@ const S=[
     if(s.k===8&&b.x>51)return true;
   },
   prog:s=>`Koni ${s.k} / 8`},
- {name:'Sekiz Çizme',info:()=>'Sağdaki birinci çembere gir, tam tur at; sonra ikinci çembere geçip ters yönde tam tur at. Çizginin dışına çıkma.',
+ {name:'Sekiz Çizme',info:()=>'Sağdaki birinci çembere alttan gir, mavi oklar yönünde (saat yönünün tersine) tam tur at; sonra ikinci çembere geçip sarı oklar yönünde (saat yönünde) tam tur at.',
   start:[55.5,38,-Math.PI/2],goal:[55.5,33],
   act:b=>hyp(b.x-C1[0],b.y-C1[1])<CR,
   init:()=>({a1:0,a2:0,cur:0,prev:0}),
@@ -181,11 +181,12 @@ const S=[
     const cur=d1<=d2?1:2,c=cur===1?C1:C2,ang=Math.atan2(b.y-c[1],b.x-c[0]);
     if(s.cur===cur){const da=wrap(ang-s.prev);if(cur===1)s.a1+=da;else s.a2+=da;}
     s.cur=cur;s.prev=ang;
-    if(Math.abs(s.a1)>2&&Math.abs(s.a2)>2&&Math.sign(s.a1)===Math.sign(s.a2))return'İkinci çemberde ters yönde dönmelisin';
+    if(s.a1>1.2)return'Birinci çemberde ok yönünde (saat yönünün tersine) dönmelisin';
+    if(s.a2<-1.2)return'İkinci çemberde ok yönünde (saat yönünde) dönmelisin';
     const full=2*Math.PI*.92;
-    if(Math.abs(s.a1)>=full&&Math.abs(s.a2)>=full)return true;
+    if(-s.a1>=full&&s.a2>=full)return true;
   },
-  prog:s=>{const f=a=>Math.min(100,Math.round(Math.abs(a)/(2*Math.PI*.92)*100));return`Birinci çember %${f(s.a1)} · İkinci çember %${f(s.a2)}`}},
+  prog:s=>{const f=a=>Math.min(100,Math.round(Math.max(0,a)/(2*Math.PI*.92)*100));return`Birinci çember %${f(-s.a1)} · İkinci çember %${f(s.a2)}`}},
  {name:'Denge Çizgisi',info:()=>'20 m uzunluğundaki, 20 cm genişliğindeki sarı çizginin üzerinden ayrılmadan, yavaş ve dengeli geç.',
   start:[38,22,Math.PI],goal:[30,22],
   act:b=>b.x<30&&Math.abs(b.y-22)<.8&&Math.cos(b.th)<0,
@@ -361,6 +362,17 @@ function drawWorld(forTex){
   [C1,C2].forEach((c,i)=>{ctx.beginPath();ctx.arc(c[0],c[1],CR,0,7);ctx.lineWidth=.18;ctx.strokeStyle='#e03131';ctx.stroke();
     line([c,[c[0]+CR-.3,c[1]]],.07,'#4dabf7');arrowHead(c,[c[0]+CR-.2,c[1]],'#4dabf7',.4);text('3,5 m',c[0]+1.6,c[1]-.5,.65,'#d0ebff');
     text(i?'İkinci Çember':'Birinci Çember',c[0],c[1]-CR-.7,.75,'#ffc9c9');});
+  // dönüş yönü okları: birinci çember saat yönünün tersine, ikinci çember saat yönünde
+  [[C1,-1,'#74c0fc'],[C2,1,'#ffd43b']].forEach(([c,dir,col])=>{
+    for(let k=0;k<3;k++){
+      const a0=k*2*Math.PI/3+.5,a1=a0+dir*1.15,r=2.75;
+      ctx.beginPath();ctx.arc(c[0],c[1],r,a0,a1,dir<0);ctx.lineWidth=.16;ctx.strokeStyle=col;ctx.stroke();
+      const ex=c[0]+Math.cos(a1)*r,ey=c[1]+Math.sin(a1)*r,tx=-Math.sin(a1)*dir,ty=Math.cos(a1)*dir;
+      arrowHead([ex-tx,ey-ty],[ex+tx*.35,ey+ty*.35],col,.65);
+    }
+    text(c===C1?'1':'2',c[0]-1.2,c[1]+1.3,1.1,col);
+  });
+  text('GİRİŞ ↑',57.2,31.6,.6,'#fff','left');
   text('SEKİZ ÇİZME',48.5,35,1.2,'#fff');
 
   // Balance line
