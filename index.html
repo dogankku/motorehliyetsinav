@@ -823,7 +823,7 @@ function init3d(){
 
   function buildCockpit(veh){
     const classic=veh==='classic';
-    const ck=new THREE.Group();cam3.add(ck);ck.position.set(0,-.33,-.06);
+    const ck=new THREE.Group();cam3.add(ck);ck.position.set(0,-.36,-.06);
     const steerG=new THREE.Group();ck.add(steerG);steerG.position.set(0,0,-.5);
     const body=classic?Std(0x9ccabd,{roughness:.22,metalness:.15}):Std(0x3e4349,{roughness:.48,metalness:.35}),
           trim=Std(0x18191c,{roughness:.6}),panel=Std(0x232528,{roughness:.85}),blk=Std(0x18191c,{roughness:.5}),satin=Std(0x34373c,{roughness:.42,metalness:.35}),
@@ -831,40 +831,40 @@ function init3d(){
           glove=Std(0x1e2023,{roughness:.8}),leather=Std(0x2d3036,{roughness:.65}),sleeve=Std(0x2c3138,{roughness:.8}),red=Std(0xc8202a,{roughness:.4}),
           cream=Std(0xeee8d8,{roughness:.5});
     // handlebar cover (turns with the bars)
-    const hsPts=classic?[[-.31,-.07],[0,-.115],[.31,-.07],[.37,-.005],[.31,.07],[.13,.13],[0,.2],[-.13,.13],[-.31,.07],[-.37,-.005]]
-                       :[[-.32,-.055],[0,-.1],[.32,-.055],[.37,.01],[.28,.075],[.1,.14],[0,.17],[-.1,.14],[-.28,.075],[-.37,.01]];
-    const hsG=soft(hsPts,classic?.05:.042,.024);hsG.rotateX(-Math.PI/2);
-    mesh(hsG,body,steerG,0,.02,0);
+    const hsPts=classic?[[-.3,-.05],[0,-.085],[.3,-.05],[.36,0],[.3,.045],[.12,.085],[0,.12],[-.12,.085],[-.3,.045],[-.36,0]]
+                       :[[-.31,-.045],[0,-.075],[.31,-.045],[.36,.01],[.27,.05],[.1,.09],[0,.105],[-.1,.09],[-.27,.05],[-.36,.01]];
+    const hsG=soft(hsPts,classic?.028:.024,.013);hsG.rotateX(-Math.PI/2);
+    mesh(hsG,body,steerG,0,.03,0);
     if(!classic){
       // raised instrument hood with the TFT set into its rider-facing slope
-      const pr=[[-.055,0],[-.012,.082],[.05,.09],[.15,.026],[.165,0]],bs=new THREE.Shape();
+      const pr=[[-.05,0],[-.015,.06],[.04,.066],[.12,.018],[.13,0]],bs=new THREE.Shape();
       bs.moveTo(...pr[0]);pr.slice(1).forEach(p=>bs.lineTo(...p));bs.lineTo(...pr[0]);
-      const bg=new THREE.ExtrudeGeometry(bs,{depth:.25,bevelEnabled:true,bevelSize:.014,bevelThickness:.014,bevelSegments:5,curveSegments:8});bg.translate(0,0,-.125);bg.rotateY(Math.PI/2);bg.computeVertexNormals();
-      mesh(bg,body,steerG,0,.052,0);
-      const nrm=new THREE.Vector3(0,.49,.872),mid=new THREE.Vector3(0,.052+.041,.0335).addScaledVector(nrm,.0148);
-      const bz=mesh(rbox(.228,.094,.006,.003),trim,steerG,mid.x,mid.y,mid.z);bz.rotation.x=-.512;
-      const scr=new THREE.Mesh(new THREE.PlaneGeometry(.205,.08),new THREE.MeshBasicMaterial({map:null}));scr.position.copy(mid).addScaledVector(nrm,.0034);scr.rotation.x=-.512;steerG.add(scr);
+      const bg=new THREE.ExtrudeGeometry(bs,{depth:.23,bevelEnabled:true,bevelSize:.01,bevelThickness:.01,bevelSegments:5,curveSegments:8});bg.translate(0,0,-.115);bg.rotateY(Math.PI/2);bg.computeVertexNormals();
+      mesh(bg,body,steerG,0,.05,0);
+      const nrm=new THREE.Vector3(0,.504,.863),mid=new THREE.Vector3(0,.05+.03,.0325).addScaledVector(nrm,.0106);
+      const bz=mesh(rbox(.21,.07,.006,.003),trim,steerG,mid.x,mid.y,mid.z);bz.rotation.x=-.528;
+      const scr=new THREE.Mesh(new THREE.PlaneGeometry(.19,.06),new THREE.MeshBasicMaterial({map:null}));scr.position.copy(mid).addScaledVector(nrm,.0034);scr.rotation.x=-.528;steerG.add(scr);
       var dash=document.createElement('canvas');dash.width=512;dash.height=256;var dt=canvasTex(dash);dt.anisotropy=aniso;scr.material.map=dt;
-      mesh(rbox(.06,.008,.02,.003),Std(0x9aa0a6,{metalness:.8,roughness:.25}),steerG,0,.152,-.02);
+      mesh(rbox(.05,.006,.016,.0025),Std(0x9aa0a6,{metalness:.8,roughness:.25}),steerG,0,.124,-.02);
     }else{
       // round speedometer in a chrome bezel on top of the headset, headlamp hump in front
-      const g=new THREE.Group();g.position.set(0,.112,.03);g.rotation.x=-.95;steerG.add(g);
-      const pod=mesh(new THREE.CylinderGeometry(.07,.082,.07,48),body,g,0,0,-.032);pod.rotation.x=Math.PI/2;
+      const g=new THREE.Group();g.position.set(0,.1,.02);g.rotation.x=-1.0;steerG.add(g);
+      const pod=mesh(new THREE.CylinderGeometry(.068,.076,.05,48),body,g,0,0,-.022);pod.rotation.x=Math.PI/2;
       mesh(new THREE.TorusGeometry(.061,.0075,12,48),chrome,g,0,0,.004);
       var dash=document.createElement('canvas');dash.width=dash.height=256;var dt=canvasTex(dash);dt.anisotropy=aniso;
       mesh(new THREE.CircleGeometry(.059,48),new THREE.MeshBasicMaterial({map:dt}),g,0,0,.0035);
-      const hump=mesh(new THREE.SphereGeometry(1,32,20),body,steerG,0,.04,-.12);hump.scale.set(.1,.055,.085);
+      const hump=mesh(new THREE.SphereGeometry(1,32,20),body,steerG,0,.035,-.09);hump.scale.set(.085,.035,.06);
     }
     // front fairing + windscreen (fixed to the scooter)
     if(!classic){
       const nose=soft([[-.45,.74],[.45,.74],[.39,.93],[.25,1.1],[-.25,1.1],[-.39,.93]],.06,.035);nose.rotateX(-Math.PI/2);
-      const n=mesh(nose,body,ck,0,-.07,0);n.rotation.x=.1;
-      const vent=mesh(rbox(.5,.01,.045,.004),trim,ck,0,-.005,-.79);vent.rotation.x=.1;
+      const n=mesh(nose,body,ck,0,-.12,0);n.rotation.x=.08;
+      const vent=mesh(rbox(.5,.01,.045,.004),trim,ck,0,-.055,-.79);vent.rotation.x=.08;
       const ac=document.createElement('canvas');ac.width=4;ac.height=128;const ag=ac.getContext('2d'),agr=ag.createLinearGradient(0,0,0,128);
-      agr.addColorStop(0,'rgb(70,70,70)');agr.addColorStop(.7,'rgb(110,110,110)');agr.addColorStop(1,'rgb(175,175,175)');ag.fillStyle=agr;ag.fillRect(0,0,4,128);
+      agr.addColorStop(0,'rgb(40,40,40)');agr.addColorStop(.7,'rgb(70,70,70)');agr.addColorStop(1,'rgb(130,130,130)');ag.fillStyle=agr;ag.fillRect(0,0,4,128);
       const atex=new THREE.CanvasTexture(ac);
-      const wsG=new THREE.Group();wsG.position.set(0,.085,-1.04);wsG.rotation.x=.55;ck.add(wsG);
-      const RW=.75,LW=1.0,HW=.29;
+      const wsG=new THREE.Group();wsG.position.set(0,.02,-1.04);wsG.rotation.x=.6;ck.add(wsG);
+      const RW=.75,LW=1.0,HW=.22;
       mesh(new THREE.CylinderGeometry(RW,RW,HW,40,1,true,Math.PI-LW/2,LW),new THREE.MeshStandardMaterial({color:lin(0x7f95a6),transparent:true,alphaMap:atex,roughness:.04,metalness:.4,side:THREE.DoubleSide,depthWrite:false}),wsG,0,HW/2,RW);
       mesh(new THREE.CylinderGeometry(RW+.003,RW+.003,.03,40,1,true,Math.PI-LW/2,LW),new THREE.MeshStandardMaterial({color:lin(0x141518),roughness:.6,side:THREE.DoubleSide}),wsG,0,.015,RW);
     }
