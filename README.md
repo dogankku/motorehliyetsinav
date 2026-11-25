@@ -34,7 +34,9 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 | Enter | Başla / tekrar |
 | + / − | Yakınlaştır / uzaklaştır |
 
-Dokunmatik cihazlarda ekran düğmeleri çıkar.
+## Telefonda
+
+Telefonu yan çevir. Sol başparmakla alttaki direksiyon alanını sağa sola kaydır, sağdaki GAZ ve FREN düğmelerini basılı tut. İstersen açılış ekranından "Telefonu eğ" seçerek eğimle sürebilirsin (iPhone'da izin ister). Tam ekran için tarayıcıda "Ana ekrana ekle" de kullanılabilir.
 
 ## Özellikler
 

@@ -70,6 +70,28 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 #touch .tmid{flex-wrap:wrap;justify-content:center;max-width:330px;align-self:flex-end;gap:6px}
 #touch .tmid button{width:auto;height:40px;border-radius:20px;padding:0 13px;font:700 15px "Barlow Condensed",sans-serif}
 .rt{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:14px}.rt td{padding:6px 0;border-bottom:1px solid #253041;color:#dfe3e8}.rt td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.rt tr.x td{color:#ff8787}
+#spad{position:relative;width:240px;height:96px;border-radius:48px;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.22);touch-action:none;pointer-events:auto}
+#spad i{position:absolute;top:50%;left:50%;width:78px;height:78px;margin:-39px 0 0 -39px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .08s}
+#spad::before,#spad::after{position:absolute;top:50%;transform:translateY(-50%);font:800 22px Barlow,sans-serif;color:rgba(255,255,255,.6)}#spad::before{content:'◀';left:14px}#spad::after{content:'▶';right:14px}
+#spad.tilt{opacity:.35}
+#rot{position:fixed;inset:0;z-index:9;display:none;place-items:center;text-align:center;background:#0d1117;color:#fff;padding:24px;font:600 18px Barlow,sans-serif}
+#rot b{display:block;font:800 30px "Barlow Condensed",sans-serif;margin-bottom:8px}
+.touchOnly{display:none}
+@media (pointer:coarse){
+  .touchOnly{display:block}.keysOnly{display:none}
+  #stages,#mini,#gauge .vbtn{display:none!important}
+  #task{top:6px!important;bottom:auto!important;left:8px;transform:none;width:min(430px,56vw)!important;padding:6px 10px}
+  #task p{display:none}#task h2{font-size:17px}#task .prog{font-size:14px;margin-top:2px}
+  #gauge{top:6px!important;bottom:auto!important;right:8px;padding:6px 10px;width:auto}#spd{font-size:34px}
+  #exam{top:58px;left:8px;transform:none!important;max-width:56vw;padding:5px 10px}#exam span{font-size:13px}#exam b{font-size:11px}#dir{top:96px}
+  #toast{font-size:22px}
+  #touch{bottom:10px;padding:0 10px;align-items:flex-end}
+  #touch button[data-k]{width:92px;height:92px;font-size:24px}
+  #touch .tmid{position:fixed;top:6px;left:calc(56vw + 22px);right:150px;max-width:none;justify-content:flex-start;align-self:auto}#touch .tmid button{height:34px;padding:0 10px;font-size:14px}
+  .go{position:sticky;bottom:0;box-shadow:0 -10px 20px #141a23}
+  body.playing.portrait #rot{display:grid}
+}
+@media (max-height:520px){.card{padding:16px 18px}.card h1{font-size:26px}.card>p{font-size:14px}.opt{margin-top:8px}.seg button{min-height:38px;font-size:15px}.go{margin-top:12px;min-height:46px}}
 .best{font:600 15px "Barlow Condensed",sans-serif;color:#9fd0ff;margin:6px 0 0}
 .hide{display:none!important}
 @media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){body.fpv #gauge{bottom:auto;top:96px}#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
@@ -87,9 +109,10 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 <div id="toast" class="hud"></div>
 <div id="exam" class="hud"><b>SINAV GÖREVLİSİ</b><span></span></div>
 <div id="flash"></div>
+<div id="rot"><div><b>Telefonu yan çevir</b>Sınav yatay ekranda oynanır.</div></div>
 
 <div id="touch">
-  <div><button data-k="left" aria-label="Sol">◀</button><button data-k="right" aria-label="Sağ">▶</button></div>
+  <div><div id="spad" aria-label="Direksiyon"><i></i></div></div>
   <div class="tmid"><button data-a="q">◀ Sinyal</button><button data-a="e">Sinyal ▶</button><button data-a="h">Korna</button><button data-a="l">Far</button><button data-a="g">Aşağı bak</button><button data-a="v">Görünüş</button></div>
   <div><button data-k="brake" aria-label="Fren">FREN</button><button data-k="gas" aria-label="Gaz">GAZ</button></div>
 </div>
@@ -101,9 +124,11 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
     <div class="opt"><b>Sertifika sınıfı</b><div class="seg" data-o="cls"><button>M</button><button>A1</button><button class="on">A2</button><button>A</button><button>B1</button></div></div>
     <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
     <div class="opt"><b>Görünüş</b><div class="seg" data-o="view"><button data-v="top">Kuşbakışı</button><button class="on" data-v="fpv">Sürücü gözü</button></div></div>
+    <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
     <div class="opt"><b>Grafik</b><div class="seg" data-o="gfx"><button class="on" data-v="high">Yüksek</button><button data-v="low">Düşük · zayıf cihazlar için</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys">
+    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Sol başparmağınla alttaki direksiyon alanını sağa sola kaydır (ne kadar kaydırırsan o kadar döner). Sağdaki GAZ ve FREN düğmelerini basılı tut. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
+    <div class="keys keysOnly">
       <b>Tuşlar</b>
       <div class="kgrid">
         <div><span><kbd>↑</kbd><kbd>W</kbd></span>Gaz</div>
@@ -141,7 +166,7 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const mini=document.getElementById('mini'),mctx=mini.getContext('2d');
 const $=id=>document.getElementById(id);
-const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high'};
+const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high',steer:'pad'};
 document.querySelectorAll('.seg').forEach(seg=>{
   seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -298,7 +323,7 @@ function route(){return[
 let b,si,active,st,faults,time,running=false,freeze=0,footT=0,zoom=1,cam={x:0,y:0},endInfo=null;
 const key={gas:0,brake:0,left:0,right:0};
 let ind=0,hb=false,horn=false,blinkOn=false,blinkT=0,lookKey=false;
-let stageTimes=[],stT=0,crash=null,crashTok=0;
+let stageTimes=[],stT=0,crash=null,crashTok=0,steerAnalog=null,tiltZero=null;
 const TL=[45,60,40,40,40,30,30];
 const limitOf=i=>Math.round(TL[i]*(opts.diff==='easy'?1.5:1));
 const CMD=['Slalom. Konilerin arasından sırayla geçin.','Sekiz çizme. Önce birinci çember, sonra ikinci.','Denge çizgisi. Yavaş ve dengeli geçin.','Dar alanda U dönüşü yapın.','Hızlanın.','Hıza çıkın, engelden kaçmaya hazırlanın.','Hızlanın, kırmızı çizgide fren yapın.'];
@@ -314,6 +339,7 @@ function placeAt(i){
 }
 function newGame(){
   setRules();buildGround(true);si=0;faults=[];stageTimes=[];crash=null;crashTok++;time=0;placeAt(0);cam.x=b.x;cam.y=b.y;running=true;freeze=0;
+  document.body.classList.add('playing');tiltZero=null;
   setTimeout(()=>say('Sınav başlıyor. Slalom için başlangıç çizgisine ilerleyin.'),500);
   $('start').classList.add('hide');$('res').classList.add('hide');buildList();
   applyView();
@@ -340,7 +366,7 @@ function pass(){
   toast('Aşama tamamlandı ✓','good');buildList();say('Tamam. Sıradaki aşama: '+S[si].name+'.');
 }
 function finish(ok,msg){
-  buildList();
+  buildList();document.body.classList.remove('playing');
   const t=time.toFixed(1);
   if(ok){
     const clean=faults.length===0;
@@ -365,7 +391,7 @@ function finish(ok,msg){
 
 /* ---------- Physics ---------- */
 function step(dt){
-  const steerT=key.right-key.left;
+  const steerT=key.left||key.right?key.right-key.left:(steerAnalog!=null?steerAnalog:0);
   b.steer+=(steerT-b.steer)*Math.min(1,dt*5);
   let a;
   if(key.brake)a=-7.5;else if(key.gas)a=3.3*(1-b.v/22);else a=-.35-.004*b.v*b.v;
@@ -1085,8 +1111,33 @@ document.querySelectorAll('#touch [data-k]').forEach(btn=>{
   const off=e=>{e.preventDefault();key[k]=0;btn.classList.remove('on');};
   btn.addEventListener('pointerdown',on);btn.addEventListener('pointerup',off);btn.addEventListener('pointercancel',off);btn.addEventListener('pointerleave',off);
 });
-if(matchMedia('(pointer:coarse)').matches)$('touch').style.display='flex';
-$('goBtn').addEventListener('click',()=>{initAudio();try{speechSynthesis&&speechSynthesis.getVoices();}catch(e){}newGame();});
+const COARSE=matchMedia('(pointer:coarse)').matches;
+if(COARSE){$('touch').style.display='flex';opts.gfx='low';document.querySelectorAll('[data-o=gfx] button').forEach(x=>x.classList.toggle('on',x.dataset.v==='low'));}
+const portraitChk=()=>document.body.classList.toggle('portrait',innerHeight>innerWidth);addEventListener('resize',portraitChk);portraitChk();
+{const pad=$('spad'),knob=pad.querySelector('i');let pid=null;
+  const upd=e=>{const r=pad.getBoundingClientRect(),v=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(r.width/2-30)));
+    steerAnalog=Math.abs(v)<.06?0:v;knob.style.transform=`translateX(${(v*(r.width/2-40)).toFixed(0)}px)`;};
+  pad.addEventListener('pointerdown',e=>{if(opts.steer==='tilt')return;e.preventDefault();pid=e.pointerId;pad.setPointerCapture(pid);upd(e);});
+  pad.addEventListener('pointermove',e=>{if(e.pointerId===pid)upd(e);});
+  const end=e=>{if(e.pointerId!==pid)return;pid=null;if(opts.steer!=='tilt')steerAnalog=0;knob.style.transform='';};
+  pad.addEventListener('pointerup',end);pad.addEventListener('pointercancel',end);}
+function onTilt(e){
+  if(opts.steer!=='tilt'||e.beta==null)return;
+  const ang=(screen.orientation&&screen.orientation.angle)||window.orientation||0;
+  const raw=ang===90?e.beta:ang===-90||ang===270?-e.beta:e.gamma;
+  if(tiltZero==null)tiltZero=raw;
+  const d=raw-tiltZero,v=Math.abs(d)<2.5?0:Math.max(-1,Math.min(1,(d-Math.sign(d)*2.5)/22));
+  steerAnalog=v;$('spad').querySelector('i').style.transform=`translateX(${(v*80).toFixed(0)}px)`;
+}
+async function startTilt(){
+  $('spad').classList.toggle('tilt',opts.steer==='tilt');
+  if(opts.steer!=='tilt')return;
+  try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')throw 0;}
+    addEventListener('deviceorientation',onTilt);
+    setTimeout(()=>{if(tiltZero==null){opts.steer='pad';$('spad').classList.remove('tilt');toast('Eğim sensörü kullanılamadı, ekran direksiyonuna geçildi','bad');}},2500);
+  }catch(err){opts.steer='pad';$('spad').classList.remove('tilt');toast('Eğim izni verilmedi, ekran direksiyonu kullanılıyor','bad');}
+}
+$('goBtn').addEventListener('click',()=>{if(COARSE){try{const el=document.documentElement;(el.requestFullscreen||el.webkitRequestFullscreen).call(el).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})).catch(()=>{});}catch(e){}startTilt();}initAudio();try{speechSynthesis&&speechSynthesis.getVoices();}catch(e){}newGame();});
 $('againBtn').addEventListener('click',()=>{$('res').classList.add('hide');$('start').classList.remove('hide');});
 
 time=0;faults=[];si=0;setRules();buildGround();placeAt(0);cam.x=b.x+12;cam.y=b.y-6;buildList();
