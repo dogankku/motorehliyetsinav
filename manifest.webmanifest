@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "Motosiklet Direksiyon Sınavı Simülasyonu",
+  "short_name": "Motor Sınavı",
+  "description": "Motosiklet ehliyeti direksiyon sınavı parkurunu 3D simülasyonda çalış: slalom, sekiz çizme, denge çizgisi, dar alanda U dönüşü, hızlanıp durma, engelden kaçış ve ani fren.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#0f1724",
+  "theme_color": "#0f1724",
+  "categories": ["education", "games", "simulation"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "store/screenshots/1-surucu-gozu.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide", "label": "Sürücü gözünden slalom" },
+    { "src": "store/screenshots/2-kusbakisi.png", "sizes": "1280x720", "type": "image/png", "form_factor": "wide", "label": "Kuşbakışı parkur" }
+  ]
+}

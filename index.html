@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>Motosiklet Direksiyon Sınavı</title>
+<meta name="description" content="Motosiklet ehliyeti direksiyon sınavı parkurunu 3D simülasyonda çalış: slalom, sekiz çizme, denge çizgisi, U dönüşü, ani fren.">
+<meta name="theme-color" content="#0f1724">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -101,6 +107,9 @@ body.joy #joy{display:block}body.joy #spad{display:none}
   body.playing.portrait #rot{display:grid}
 }
 @media (max-height:520px){.card{padding:16px 18px}.card h1{font-size:26px}.card>p{font-size:14px}.opt{margin-top:8px}.seg button{min-height:38px;font-size:15px}.go{margin-top:12px;min-height:46px}}
+.legal{font-size:12px;color:#8a949e;margin:12px 0 0;line-height:1.45}.legal a,#about a{color:#9fd0ff}
+#about .warn{background:#2a2410;border-left:4px solid #f5c400;padding:10px 12px;border-radius:4px;color:#e9dfbf;font-size:14px}
+#about .cred{font-size:13px;color:#8a949e}
 .best{font:600 15px "Barlow Condensed",sans-serif;color:#9fd0ff;margin:6px 0 0}
 .hide{display:none!important}
 @media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){body.fpv #gauge{bottom:auto;top:96px}#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
@@ -156,6 +165,19 @@ body.joy #joy{display:block}body.joy #spad{display:none}
       <p class="knote">Aşama sırasında hız 2 km/h'nin altına düşerse ayağın yere değmiş sayılır. Her aşamanın bir süre sınırı var. Telefonda ekrandaki GAZ, FREN, ◀ ▶ ve sinyal/korna/far düğmelerini kullan.</p>
     </div>
     <button class="go" id="goBtn">Sınava Başla</button>
+    <p class="legal">Bu uygulama bir eğitim simülasyonudur; MEB, Emniyet Genel Müdürlüğü veya resmi sınav kurumlarıyla bağlantısı yoktur. <a href="#" id="aboutLnk">Hakkında</a> · <a href="gizlilik.html">Gizlilik</a></p>
+  </div>
+</div>
+
+<div id="about" class="ov hide">
+  <div class="card">
+    <h1>Hakkında</h1>
+    <p><b>Motosiklet Direksiyon Sınavı Simülasyonu</b> · Sürüm 1.0.0</p>
+    <p>Motosiklet ehliyeti (M, A1, A2, A, B1) direksiyon sınavına hazırlanmak için bir eğitim simülasyonudur. Parkur; slalom, sekiz çizme, denge çizgisi, dar alanda U dönüşü, hızlanıp durma, engelden kaçış ve ani fren aşamalarından oluşur.</p>
+    <p class="warn">Resmi bir uygulama değildir. MEB, Emniyet Genel Müdürlüğü veya herhangi bir sınav kurumuyla bağlantısı yoktur. Parkur ölçüleri, yönetmelik ekindeki "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"ne göre hazırlanmıştır. Aşama süre sınırları, toleranslar ve sesli komutlar temsilidir; gerçek sınavdaki uygulama farklı olabilir. Güncel kurallar için sürücü kursuna danış.</p>
+    <p>Gizlilik: Uygulama kişisel veri toplamaz; en iyi süren yalnızca cihazında saklanır. <a href="gizlilik.html">Gizlilik politikası</a></p>
+    <p class="cred">Kullanılan açık kaynak bileşenler: three.js (MIT lisansı), Barlow ve Barlow Condensed yazı tipleri (SIL Open Font License).</p>
+    <button class="go" id="aboutClose">Kapat</button>
   </div>
 </div>
 
@@ -169,7 +191,8 @@ body.joy #joy{display:block}body.joy #spad{display:none}
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="lib/three.min.js"></script>
+<script>window.THREE||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>')</script>
 <script>
 {
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');
@@ -1159,10 +1182,13 @@ async function startTilt(){
   }catch(err){opts.steer='pad';$('spad').classList.remove('tilt');toast('Eğim izni verilmedi, ekran direksiyonu kullanılıyor','bad');}
 }
 $('goBtn').addEventListener('click',()=>{if(COARSE){try{const el=document.documentElement;(el.requestFullscreen||el.webkitRequestFullscreen).call(el).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{})).catch(()=>{});}catch(e){}startTilt();}initAudio();try{speechSynthesis&&speechSynthesis.getVoices();}catch(e){}newGame();});
+$('aboutLnk').addEventListener('click',e=>{e.preventDefault();$('about').classList.remove('hide');});
+$('aboutClose').addEventListener('click',()=>$('about').classList.add('hide'));
 $('againBtn').addEventListener('click',()=>{$('res').classList.add('hide');$('start').classList.remove('hide');});
 
 time=0;faults=[];si=0;setRules();buildGround();placeAt(0);cam.x=b.x+12;cam.y=b.y-6;buildList();
 requestAnimationFrame(loop);
+if('serviceWorker' in navigator&&window.isSecureContext&&location.protocol!=='file:'){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
 }
 </script>
 </body>

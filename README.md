@@ -53,3 +53,9 @@ Telefonu yan çevir. Sol alttaki joystick'i sağa sola iterek direksiyonu çevir
 - Koni/engele çarpmak, çizgiye basmak, şeritten çıkmak hatadır.
 - **Sınav modu:** ilk hatada elenirsin. **Antrenman modu:** hatalı aşama tekrarlanır.
 - **Gerçekçi / Kolay** zorluk: çizgi toleransları değişir.
+
+## Play Store
+
+Uygulama PWA olarak hazırdır (manifest, çevrimdışı çalışma, simgeler). Mağaza metinleri, görseller ve form yanıtları `store/LISTING.md`, adım adım yayın rehberi `store/YAYIN-REHBERI.md` içindedir. Gizlilik politikası: `gizlilik.html`.
+
+> Bu uygulama bir eğitim simülasyonudur; MEB, Emniyet Genel Müdürlüğü veya resmi sınav kurumlarıyla bağlantısı yoktur.

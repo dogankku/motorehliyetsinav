@@ -1,0 +1,6 @@
+# İmza anahtarlarını asla yükleme
+*.keystore
+*.jks
+signing-key-info.txt
+*.aab
+*.apk
