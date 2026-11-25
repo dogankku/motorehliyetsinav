@@ -24,7 +24,7 @@ body.fpv #dir.on{display:grid}
 .hud{position:fixed;pointer-events:none;z-index:2}
 .panel{background:rgba(12,15,20,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:9px 13px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 body.fpv #spd{display:none}
-body.fpv #mini{bottom:auto;top:150px}
+body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!important}
 .cond{font-family:"Barlow Condensed",sans-serif}
 #task{top:10px;left:50%;transform:translateX(-50%);width:min(520px,calc(100% - 500px));text-align:center}
 #task h2{margin:0;font:800 22px/1.1 "Barlow Condensed",sans-serif;color:var(--yel)}
@@ -56,7 +56,13 @@ body.fpv #mini{bottom:auto;top:150px}
 .seg button.on{border-color:var(--yel);background:#3a3410}
 .seg button:focus-visible,.go:focus-visible{outline:3px solid #9fd0ff;outline-offset:2px}
 .go{margin-top:20px;width:100%;min-height:52px;border:0;border-radius:10px;background:var(--red);color:#fff;font:800 24px "Barlow Condensed",sans-serif;cursor:pointer}
-.keys{font-size:14px;color:#9aa3ad;margin-top:12px}.keys kbd{background:#2a3340;border-radius:4px;padding:1px 6px;color:#fff;font:600 13px Barlow,sans-serif}
+.keys{margin-top:16px}.keys>b{display:block;font:600 14px "Barlow Condensed",sans-serif;color:#9aa3ad;margin-bottom:6px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}
+.kgrid div{display:flex;align-items:center;gap:10px;font-size:14px;color:#dfe3e8;min-height:30px}
+.kgrid span{display:flex;gap:4px;flex:none;min-width:128px}
+.keys kbd{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 6px;border-radius:6px;background:#2a3340;border:1px solid #3c4858;border-bottom-width:3px;color:#fff;font:700 13px Barlow,sans-serif}
+.knote{font-size:13px;color:#9aa3ad;margin:10px 0 0}
+.card{max-width:640px}
 #res ul{padding-left:18px;margin:8px 0;color:#ffb3b3}
 .hide{display:none!important}
 @media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){body.fpv #gauge{bottom:auto;top:96px}#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
@@ -70,7 +76,7 @@ body.fpv #mini{bottom:auto;top:150px}
 <div id="stages" class="hud panel"><ol id="slist"></ol></div>
 <div id="task" class="hud panel"><h2 id="tname">Hazır</h2><p id="tinfo"></p><div class="prog" id="tprog"></div></div>
 <div id="gauge" class="hud panel"><div id="spd">0 <small>km/h</small></div><div id="meta"></div><button class="vbtn" id="vBtn">Sürücü gözü (V)</button> <button class="vbtn" id="mBtn">Ses açık (M)</button></div>
-<canvas id="mini" width="480" height="368" style="width:240px;height:184px"></canvas>
+<canvas id="mini" width="560" height="430" style="width:280px;height:215px"></canvas>
 <div id="toast" class="hud"></div>
 
 <div id="touch">
@@ -86,7 +92,23 @@ body.fpv #mini{bottom:auto;top:150px}
     <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
     <div class="opt"><b>Görünüş</b><div class="seg" data-o="view"><button data-v="top">Kuşbakışı</button><button class="on" data-v="fpv">Sürücü gözü</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys"><kbd>↑</kbd>/<kbd>W</kbd> gaz · <kbd>↓</kbd>/<kbd>S</kbd> fren · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> direksiyon · <kbd>Q</kbd>/<kbd>E</kbd> sinyal · <kbd>H</kbd> korna · <kbd>L</kbd> uzun far · <kbd>V</kbd> görünüş · <kbd>M</kbd> ses · <kbd>R</kbd> aşamayı baştan al · <kbd>+</kbd>/<kbd>−</kbd> yakınlaştır. Aşamalar sırasında hız 2 km/h'nin altına düşerse ayak yere değmiş sayılır.</div>
+    <div class="keys">
+      <b>Tuşlar</b>
+      <div class="kgrid">
+        <div><span><kbd>↑</kbd><kbd>W</kbd></span>Gaz</div>
+        <div><span><kbd>↓</kbd><kbd>S</kbd><kbd>Boşluk</kbd></span>Fren</div>
+        <div><span><kbd>←</kbd><kbd>→</kbd><kbd>A</kbd><kbd>D</kbd></span>Direksiyon</div>
+        <div><span><kbd>Q</kbd><kbd>E</kbd></span>Sol / sağ sinyal</div>
+        <div><span><kbd>H</kbd></span>Korna (basılı tut)</div>
+        <div><span><kbd>L</kbd></span>Uzun far</div>
+        <div><span><kbd>V</kbd></span>Kuşbakışı / sürücü gözü</div>
+        <div><span><kbd>M</kbd></span>Motor sesi</div>
+        <div><span><kbd>R</kbd></span>Aşamayı baştan al</div>
+        <div><span><kbd>+</kbd><kbd>−</kbd></span>Yakınlaştır (kuşbakışı)</div>
+        <div><span><kbd>Enter</kbd></span>Başla / tekrar</div>
+      </div>
+      <p class="knote">Aşama sırasında hız 2 km/h'nin altına düşerse ayağın yere değmiş sayılır. Telefonda ekrandaki GAZ, FREN ve ◀ ▶ düğmelerini kullan.</p>
+    </div>
     <button class="go" id="goBtn">Sınava Başla</button>
   </div>
 </div>
@@ -460,8 +482,8 @@ let MB=null;
 function buildMini(){
   const sc=7,w=Math.round((MM.x1-MM.x0)*sc),h=Math.round((MM.y1-MM.y0)*sc);
   if(!MB)MB=document.createElement('canvas');MB.width=w;MB.height=h;const g=MB.getContext('2d');
-  g.fillStyle='#5a7d3d';g.fillRect(0,0,w,h);
-  g.globalCompositeOperation='soft-light';g.globalAlpha=.6;g.drawImage(noiseCanvas(60,46,30,230),0,0,w,h);g.globalAlpha=.35;g.drawImage(noiseCanvas(w>>1,h>>1,40,220),0,0,w,h);
+  g.fillStyle='#7fae52';g.fillRect(0,0,w,h);
+  g.globalCompositeOperation='soft-light';g.globalAlpha=.4;g.drawImage(noiseCanvas(60,46,30,230),0,0,w,h);g.globalAlpha=.15;g.drawImage(noiseCanvas(w>>1,h>>1,40,220),0,0,w,h);
   g.globalCompositeOperation='source-over';g.globalAlpha=1;
   g.setTransform(sc,0,0,sc,-MM.x0*sc,-MM.y0*sc);
   for(let x=MM.x0;x<MM.x1;x+=6){g.fillStyle='rgba(255,255,255,.035)';g.fillRect(x,MM.y0,3,MM.y1-MM.y0);}
@@ -469,8 +491,8 @@ function buildMini(){
   // apron + pad
   g.fillStyle='#a8a59c';g.fillRect(WB.x0-5,WB.y0-5,WB.x1-WB.x0+10,WB.y1-WB.y0+10);
   g.fillStyle='#bdb9ae';g.fillRect(WB.x0-.3,WB.y0-.3,WB.x1-WB.x0+.6,WB.y1-WB.y0+.6);
-  if(G)g.drawImage(G,WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
-  g.fillStyle='rgba(255,255,255,.1)';g.fillRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
+  g.fillStyle='#9a9ea4';g.fillRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
+  if(G){g.save();g.globalAlpha=.28;g.filter='blur(2px)';g.drawImage(G,WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);g.restore();}
   const ml=(pts,wd,col)=>{g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.lineWidth=wd;g.strokeStyle=col;g.stroke();};
   const RD='#e8443a',YL='#ffd23f',WH='#f4f4f0';
   [C1,C2].forEach(c=>{g.beginPath();g.arc(c[0],c[1],CR,0,7);g.lineWidth=.55;g.strokeStyle=RD;g.stroke();});
@@ -516,8 +538,8 @@ function drawMini(){
   mctx.beginPath();mctx.moveTo(2,0);mctx.lineTo(-1.4,1.3);mctx.lineTo(-.7,0);mctx.lineTo(-1.4,-1.3);mctx.closePath();
   mctx.fillStyle='#fff';mctx.fill();mctx.lineWidth=.3;mctx.strokeStyle='#111';mctx.stroke();mctx.restore();
   mctx.setTransform(1,0,0,1,0,0);
-  const vg=mctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.35,w/2,h/2,Math.max(w,h)*.7);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.35)');mctx.fillStyle=vg;mctx.fillRect(0,0,w,h);
-  const u=w/240;
+  const vg=mctx.createRadialGradient(w/2,h/2,Math.min(w,h)*.35,w/2,h/2,Math.max(w,h)*.7);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.12)');mctx.fillStyle=vg;mctx.fillRect(0,0,w,h);
+  const u=w/280;
   mctx.fillStyle='rgba(10,12,16,.6)';mctx.fillRect(10*u,h-22*u,(10*sc)+12*u,14*u);
   mctx.fillStyle='#fff';mctx.fillRect(16*u,h-13*u,10*sc,2*u);mctx.font=`600 ${10*u}px Barlow,sans-serif`;mctx.textBaseline='bottom';mctx.fillText('10 m',16*u,h-14*u);
   mctx.save();mctx.translate(w-18*u,18*u);mctx.fillStyle='rgba(10,12,16,.6)';mctx.beginPath();mctx.arc(0,0,11*u,0,7);mctx.fill();

@@ -30,6 +30,7 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 | H | Korna (basılı tut) |
 | L | Uzun far |
 | R | Aşamayı baştan al |
+| Enter | Başla / tekrar |
 | + / − | Yakınlaştır / uzaklaştır |
 
 Dokunmatik cihazlarda ekran düğmeleri çıkar.
