@@ -26,6 +26,9 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 | ← → / A D | Direksiyon |
 | V | Kuşbakışı / sürücü gözü |
 | M | Motor sesi aç / kapat |
+| Q / E | Sol / sağ sinyal |
+| H | Korna (basılı tut) |
+| L | Uzun far |
 | R | Aşamayı baştan al |
 | + / − | Yakınlaştır / uzaklaştır |
 
