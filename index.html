@@ -80,18 +80,7 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 #joy::before,#joy::after{position:absolute;left:50%;transform:translateX(-50%);font:800 12px "Barlow Condensed",sans-serif;color:rgba(255,255,255,.75)}
 #joy::before{content:'GAZ ▲';top:7px}#joy::after{content:'▼ FREN';bottom:7px}
 #joy b{position:absolute;top:50%;transform:translateY(-50%);font:800 16px Barlow,sans-serif;color:rgba(255,255,255,.6)}
-#touch #joy,#touch #levers{display:none}body.joy #touch #joy{display:block}body.lev #touch #levers{display:flex;gap:10px;pointer-events:auto}body.joy #touch #spad,body.lev #touch #spad{display:none}
-#touch button.lev{width:132px!important;height:96px!important;border-radius:16px!important;background:rgba(15,18,23,.45)!important;border:2px solid rgba(255,255,255,.18)!important;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-#touch button.lev svg{width:110px;height:58px;transition:transform .08s;transform-origin:15% 50%}
-#touch button.lev.l svg{transform:scaleX(-1);transform-origin:85% 50%}
-#touch button.lev.on svg{transform:rotate(-14deg)}#touch button.lev.l.on svg{transform:scaleX(-1) rotate(-14deg)}
-#touch button.lev span,#touch button.ped span{font:800 15px "Barlow Condensed",sans-serif;color:#fff;letter-spacing:.04em}
-#touch button.lev.on{border-color:#ffd43b!important}
-#touch .pedals{gap:12px;align-items:flex-end}
-#touch button.ped{width:86px!important;height:122px!important;border-radius:12px!important;background:transparent!important;padding:0;position:relative;display:block}
-#touch button.ped svg{width:100%;height:100%;transition:transform .07s;transform-origin:50% 100%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}
-#touch button.ped span{position:absolute;left:0;right:0;bottom:22px;text-align:center;pointer-events:none}
-#touch button.ped.on svg{transform:perspective(300px) rotateX(24deg) scaleY(.93)}
+body.joy #joy{display:block}body.joy #spad{display:none}
 #rot{position:fixed;inset:0;z-index:9;display:none;place-items:center;text-align:center;background:#0d1117;color:#fff;padding:24px;font:600 18px Barlow,sans-serif}
 #rot b{display:block;font:800 30px "Barlow Condensed",sans-serif;margin-bottom:8px}
 .touchOnly{display:none}
@@ -130,9 +119,9 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 <div id="rot"><div><b>Telefonu yan çevir</b>Sınav yatay ekranda oynanır.</div></div>
 
 <div id="touch">
-  <div><div id="levers"><button data-k="left" class="lev l" aria-label="Sol"><svg viewBox="0 0 130 70" aria-hidden="true"><rect x="4" y="18" width="30" height="34" rx="8" fill="#2a2d33" stroke="#555b63" stroke-width="2"/><circle cx="19" cy="35" r="6" fill="#9aa1a8"/><path d="M28 30 C60 26 92 30 118 38 Q126 41 122 47 Q118 51 110 49 C86 44 58 42 28 42 Z" fill="#c3c8cd" stroke="#6b7178" stroke-width="1.5"/><path d="M30 31 C60 28 90 31 116 39" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2"/><circle cx="117" cy="44" r="6" fill="#dfe3e6"/></svg><span>SOL</span></button><button data-k="right" class="lev r" aria-label="Sağ"><svg viewBox="0 0 130 70" aria-hidden="true"><rect x="4" y="18" width="30" height="34" rx="8" fill="#2a2d33" stroke="#555b63" stroke-width="2"/><circle cx="19" cy="35" r="6" fill="#9aa1a8"/><path d="M28 30 C60 26 92 30 118 38 Q126 41 122 47 Q118 51 110 49 C86 44 58 42 28 42 Z" fill="#c3c8cd" stroke="#6b7178" stroke-width="1.5"/><path d="M30 31 C60 28 90 31 116 39" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2"/><circle cx="117" cy="44" r="6" fill="#dfe3e6"/></svg><span>SAĞ</span></button></div><div id="joy" aria-label="Joystick"><i></i></div><div id="spad" aria-label="Direksiyon"><i></i></div></div>
+  <div><div id="joy" aria-label="Joystick"><i></i></div><div id="spad" aria-label="Direksiyon"><i></i></div></div>
   <div class="tmid"><button data-a="q">◀ Sinyal</button><button data-a="e">Sinyal ▶</button><button data-a="h">Korna</button><button data-a="l">Far</button><button data-a="g">Aşağı bak</button><button data-a="v">Görünüş</button></div>
-  <div class="pedals"><button data-k="brake" class="ped" aria-label="Fren"><svg viewBox="0 0 90 120" aria-hidden="true"><rect x="38" y="104" width="14" height="14" rx="3" fill="#3a3f45"/><path d="M14 8 H76 Q84 8 83 16 L78 100 Q77 106 70 106 H20 Q13 106 12 100 L7 16 Q6 8 14 8 Z" fill="#2b2f35" stroke="#6c737b" stroke-width="2.5"/><rect x="16" y="22" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="35" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="48" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="61" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="74" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="87" width="58" height="6" rx="3" fill="#4a5058"/><rect x="12" y="8" width="66" height="7" rx="3" fill="#e03131"/></svg><span>FREN</span></button><button data-k="gas" class="ped" aria-label="Gaz"><svg viewBox="0 0 90 120" aria-hidden="true"><rect x="38" y="104" width="14" height="14" rx="3" fill="#3a3f45"/><path d="M14 8 H76 Q84 8 83 16 L78 100 Q77 106 70 106 H20 Q13 106 12 100 L7 16 Q6 8 14 8 Z" fill="#2b2f35" stroke="#6c737b" stroke-width="2.5"/><rect x="16" y="22" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="35" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="48" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="61" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="74" width="58" height="6" rx="3" fill="#4a5058"/><rect x="16" y="87" width="58" height="6" rx="3" fill="#4a5058"/><rect x="12" y="8" width="66" height="7" rx="3" fill="#2bb35a"/></svg><span>GAZ</span></button></div>
+  <div><button data-k="brake" aria-label="Fren">FREN</button><button data-k="gas" aria-label="Gaz">GAZ</button></div>
 </div>
 
 <div id="start" class="ov">
@@ -142,10 +131,10 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
     <div class="opt"><b>Sertifika sınıfı</b><div class="seg" data-o="cls"><button>M</button><button>A1</button><button class="on">A2</button><button>A</button><button>B1</button></div></div>
     <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
     <div class="opt"><b>Görünüş</b><div class="seg" data-o="view"><button data-v="top">Kuşbakışı</button><button class="on" data-v="fpv">Sürücü gözü</button></div></div>
-    <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="lev">Sağ / sol kol</button><button data-v="joy">Joystick</button><button data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
+    <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="joy">Joystick</button><button data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
     <div class="opt"><b>Grafik</b><div class="seg" data-o="gfx"><button class="on" data-v="high">Yüksek</button><button data-v="low">Düşük · zayıf cihazlar için</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Sol alttaki SOL ve SAĞ kollarına basılı tutarak dön, sağdaki GAZ ve FREN pedallarına basılı tutarak hızlan ve yavaşla. İstersen "Joystick" (sağa sola direksiyon, yukarı gaz, aşağı fren) ya da "Ekranda kaydır" seçeneğini kullanabilirsin. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
+    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Joystick: sol alttaki topu sağa sola it, direksiyon döner; yukarı it gaz, aşağı çek fren (ne kadar itersen o kadar). Sağdaki GAZ ve FREN düğmeleri de çalışır. İstersen "Ekranda kaydır" ile sadece direksiyon şeridi kullanabilirsin. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
     <div class="keys keysOnly">
       <b>Tuşlar</b>
       <div class="kgrid">
@@ -184,7 +173,7 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 const cv=document.getElementById('c');let ctx=cv.getContext('2d');
 const mini=document.getElementById('mini'),mctx=mini.getContext('2d');
 const $=id=>document.getElementById(id);
-const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high',steer:'lev'};
+const opts={cls:'A2',mode:'sinav',diff:'easy',view:'fpv',gfx:'high',steer:'joy'};
 document.querySelectorAll('.seg').forEach(seg=>{
   seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -1132,7 +1121,7 @@ document.querySelectorAll('#touch [data-k]').forEach(btn=>{
   btn.addEventListener('pointerdown',on);btn.addEventListener('pointerup',off);btn.addEventListener('pointercancel',off);btn.addEventListener('pointerleave',off);
 });
 const COARSE=matchMedia('(pointer:coarse)').matches;
-if(COARSE){$('touch').style.display='flex';document.body.classList.add('lev');opts.gfx='low';document.querySelectorAll('[data-o=gfx] button').forEach(x=>x.classList.toggle('on',x.dataset.v==='low'));}
+if(COARSE){$('touch').style.display='flex';document.body.classList.add('joy');opts.gfx='low';document.querySelectorAll('[data-o=gfx] button').forEach(x=>x.classList.toggle('on',x.dataset.v==='low'));}
 const portraitChk=()=>document.body.classList.toggle('portrait',innerHeight>innerWidth);addEventListener('resize',portraitChk);portraitChk();
 {const pad=$('spad'),knob=pad.querySelector('i');let pid=null;
   const upd=e=>{const r=pad.getBoundingClientRect(),v=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(r.width/2-30)));
@@ -1160,7 +1149,7 @@ function onTilt(e){
   steerAnalog=v;$('spad').querySelector('i').style.transform=`translateX(${(v*80).toFixed(0)}px)`;
 }
 async function startTilt(){
-  document.body.classList.toggle('joy',opts.steer==='joy');document.body.classList.toggle('lev',opts.steer==='lev');
+  document.body.classList.toggle('joy',opts.steer==='joy');
   $('spad').classList.toggle('tilt',opts.steer==='tilt');
   if(opts.steer!=='tilt')return;
   try{if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){const r=await DeviceOrientationEvent.requestPermission();if(r!=='granted')throw 0;}

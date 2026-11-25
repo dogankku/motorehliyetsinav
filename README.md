@@ -36,7 +36,7 @@ Resmi "Motorlu Bisiklet ve Motosiklet Direksiyon Eğitim ve Sınav Yeri Krokisi"
 
 ## Telefonda
 
-Telefonu yan çevir. Sol alttaki SOL / SAĞ kollarına basılı tutarak dön, sağdaki GAZ ve FREN pedallarına basarak hızlan ve yavaşla. Açılış ekranından Joystick ya da "Ekranda kaydır" seçeneğine de geçilebilir. İstersen açılış ekranından "Telefonu eğ" seçerek eğimle sürebilirsin (iPhone'da izin ister). Tam ekran için tarayıcıda "Ana ekrana ekle" de kullanılabilir.
+Telefonu yan çevir. Sol alttaki joystick'i sağa sola iterek direksiyonu çevir; yukarı itmek gaz, aşağı çekmek fren (kademeli). Sağdaki GAZ ve FREN düğmeleri de çalışır. Açılış ekranından "Ekranda kaydır" seçeneğine de geçilebilir. İstersen açılış ekranından "Telefonu eğ" seçerek eğimle sürebilirsin (iPhone'da izin ister). Tam ekran için tarayıcıda "Ana ekrana ekle" de kullanılabilir.
 
 ## Özellikler
 
