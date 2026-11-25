@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Motosiklet Direksiyon Sınavı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: sınav günü heyecanı, trafik tabelası netliği
+   IDEA: ehliyet sınav alanının resmi krokisi, sürülebilir halde
+   PICTURE: kuşbakışı asfalt parkur, koniler, çemberler, motor
+   COLOUR and TYPE: asfalt grisi, tabela mavisi, ikaz kırmızısı, şerit sarısı; Barlow Condensed
+   LAYOUT: tam ekran oyun alanı, köşelerde gösterge panelleri */
+:root{color-scheme:dark;--blue:#1f5fbf;--red:#e03131;--yel:#f5c400;--ink:#f4f5f7;--panel:rgba(16,20,28,.86)}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;overflow:hidden;background:#2f3338;color:var(--ink);font:15px/1.45 Barlow,system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
+.hud{position:fixed;pointer-events:none;z-index:2}
+.panel{background:var(--panel);border-radius:10px;padding:10px 14px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.cond{font-family:"Barlow Condensed",sans-serif}
+#task{top:10px;left:50%;transform:translateX(-50%);width:min(520px,calc(100% - 500px));text-align:center}
+#task h2{margin:0;font:800 22px/1.1 "Barlow Condensed",sans-serif;color:var(--yel)}
+#task p{margin:4px 0 0;font-size:14px}
+#task .prog{margin-top:4px;font:600 16px "Barlow Condensed",sans-serif;color:#9fd0ff}
+#stages{top:10px;left:10px;width:230px}
+#stages ol{margin:0;padding:0;list-style:none}
+#stages li{font:600 15px/1.65 "Barlow Condensed",sans-serif;color:#9aa3ad;display:flex;gap:8px;align-items:center}
+#stages li i{width:18px;height:18px;border-radius:50%;border:2px solid #5d6670;flex:none;font-style:normal;font-size:12px;display:grid;place-items:center}
+#stages li.cur{color:#fff}#stages li.cur i{border-color:var(--yel);background:var(--yel)}
+#stages li.done{color:#7fd88f}#stages li.done i{border-color:#2f9e44;background:#2f9e44;color:#fff}
+#gauge{top:10px;right:10px;width:210px;text-align:right}
+#spd{font:800 52px/1 "Barlow Condensed",sans-serif}#spd small{font-size:18px;color:#9aa3ad}
+#meta{font:600 15px "Barlow Condensed",sans-serif;color:#cfd4da}
+#mini{position:fixed;right:10px;bottom:10px;z-index:2;border-radius:10px;background:var(--panel);pointer-events:none}
+#toast{top:42%;left:50%;transform:translate(-50%,-50%);font:800 30px/1.1 "Barlow Condensed",sans-serif;padding:14px 24px;border-radius:12px;opacity:0;transition:opacity .25s;text-align:center;max-width:90vw}
+#toast.bad{background:var(--red)}#toast.good{background:#2f9e44}#toast.show{opacity:1}
+#touch{position:fixed;left:0;right:0;bottom:12px;z-index:3;display:none;justify-content:space-between;padding:0 12px;pointer-events:none}
+#touch div{display:flex;gap:10px;pointer-events:auto}
+#touch button{width:74px;height:74px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font:800 26px "Barlow Condensed",sans-serif;touch-action:none}
+#touch button.on{background:rgba(245,196,0,.65)}
+.ov{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:rgba(10,14,20,.72);padding:16px;overflow:auto}
+.card{background:#141a23;border-radius:16px;max-width:560px;width:100%;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.5);border-top:6px solid var(--blue)}
+.card h1{margin:0 0 4px;font:800 38px/1.05 "Barlow Condensed",sans-serif;text-wrap:balance}
+.card p{margin:6px 0;color:#c4cad1}
+.opt{margin:14px 0 0}.opt b{display:block;font:600 14px "Barlow Condensed",sans-serif;color:#9aa3ad;margin-bottom:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;min-height:44px;padding:0 12px;border-radius:8px;border:2px solid #2c3542;background:#1c2430;color:#fff;font:600 17px "Barlow Condensed",sans-serif;cursor:pointer}
+.seg button.on{border-color:var(--yel);background:#3a3410}
+.seg button:focus-visible,.go:focus-visible{outline:3px solid #9fd0ff;outline-offset:2px}
+.go{margin-top:20px;width:100%;min-height:52px;border:0;border-radius:10px;background:var(--red);color:#fff;font:800 24px "Barlow Condensed",sans-serif;cursor:pointer}
+.keys{font-size:14px;color:#9aa3ad;margin-top:12px}.keys kbd{background:#2a3340;border-radius:4px;padding:1px 6px;color:#fff;font:600 13px Barlow,sans-serif}
+#res ul{padding-left:18px;margin:8px 0;color:#ffb3b3}
+.hide{display:none!important}
+@media(max-width:1000px){#task{width:calc(100% - 20px);top:auto;bottom:10px}}@media(max-width:760px){#task{top:8px;bottom:auto}#stages{display:none}#task{top:8px}#task h2{font-size:19px}#task p{font-size:13px}#gauge{top:auto;bottom:100px;width:auto}#mini{display:none}#spd{font-size:40px}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="stages" class="hud panel"><ol id="slist"></ol></div>
+<div id="task" class="hud panel"><h2 id="tname">Hazır</h2><p id="tinfo"></p><div class="prog" id="tprog"></div></div>
+<div id="gauge" class="hud panel"><div id="spd">0 <small>km/h</small></div><div id="meta"></div></div>
+<canvas id="mini" width="210" height="150"></canvas>
+<div id="toast" class="hud"></div>
+
+<div id="touch">
+  <div><button data-k="left" aria-label="Sol">◀</button><button data-k="right" aria-label="Sağ">▶</button></div>
+  <div><button data-k="brake" aria-label="Fren">FREN</button><button data-k="gas" aria-label="Gaz">GAZ</button></div>
+</div>
+
+<div id="start" class="ov">
+  <div class="card">
+    <h1>Motosiklet Direksiyon Sınavı</h1>
+    <p>Resmi krokideki 7 aşamayı sırayla tamamla: slalom, sekiz çizme, denge çizgisi, dar alanda U dönüşü, hızlanıp durma, engelden kaçış ve ani fren.</p>
+    <div class="opt"><b>Sertifika sınıfı</b><div class="seg" data-o="cls"><button>M</button><button>A1</button><button class="on">A2</button><button>A</button><button>B1</button></div></div>
+    <div class="opt"><b>Mod</b><div class="seg" data-o="mode"><button class="on" data-v="sinav">Sınav · ilk hatada biter</button><button data-v="antrenman">Antrenman · aşamayı tekrarla</button></div></div>
+    <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
+    <div class="keys"><kbd>↑</kbd>/<kbd>W</kbd> gaz · <kbd>↓</kbd>/<kbd>S</kbd> fren · <kbd>←</kbd><kbd>→</kbd>/<kbd>A</kbd><kbd>D</kbd> direksiyon · <kbd>R</kbd> aşamayı baştan al · <kbd>+</kbd>/<kbd>−</kbd> yakınlaştır. Aşamalar sırasında hız 2 km/h'nin altına düşerse ayak yere değmiş sayılır.</div>
+    <button class="go" id="goBtn">Sınava Başla</button>
+  </div>
+</div>
+
+<div id="res" class="ov hide">
+  <div class="card" id="resCard">
+    <h1 id="resT"></h1>
+    <p id="resP"></p>
+    <ul id="resL"></ul>
+    <button class="go" id="againBtn">Tekrar Dene</button>
+  </div>
+</div>
+
+<script>
+{
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const mini=document.getElementById('mini'),mctx=mini.getContext('2d');
+const $=id=>document.getElementById(id);
+const opts={cls:'A2',mode:'sinav',diff:'easy'};
+document.querySelectorAll('.seg').forEach(seg=>{
+  seg.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    seg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    opts[seg.dataset.o]=b.dataset.v||b.textContent;});
+});
+
+/* ---------- World layout (meters) ---------- */
+const WB={x0:-4,y0:-7,x1:73,y1:47};
+const CONES=[];for(let i=0;i<8;i++)CONES.push([8+6*i,42]);
+const C1=[52,30],C2=[45,30],CR=3.5;
+let T,target,UH;
+function setRules(){
+  T=opts.diff==='real'
+   ?{bal:.15,fig:.15,footV:.55,footT:.35,spd:2,entry:.5,exit:.6,brake:7,obsPad:.15,outer:0}
+   :{bal:.4,fig:.6,footV:.3,footT:.9,spd:5,entry:.9,exit:1.1,brake:10,obsPad:0,outer:.3};
+  target=opts.cls==='M'?25:40;
+  UH=opts.cls==='A'?7:6;
+}
+const hyp=(a,b)=>Math.hypot(a,b);
+const wrap=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a};
+const kmh=v=>v*3.6;
+
+/* ---------- Stages ---------- */
+const S=[
+ {name:'Slalom',info:()=>'Konilerin arasından sırayla bir sağdan bir soldan geç. Koniye çarpma, ayağını yere koyma.',
+  start:[1,42,0],goal:[5,42],
+  act:b=>b.x>4&&Math.abs(b.y-42)<3,
+  init:b=>({k:0,first:0,px:b.x}),
+  up(b,s){
+    if(Math.abs(b.y-42)>4)return'Slalom alanının dışına çıktın';
+    if(s.k<8){const cx=CONES[s.k][0];
+      if(s.px<cx&&b.x>=cx){const side=Math.sign(b.y-42)||1;if(s.k===0)s.first=side;
+        const req=s.first*(s.k%2?-1:1);if(side!==req)return'Koni sırası atlandı (sağ-sol değişmedi)';s.k++;}}
+    s.px=b.x;
+    if(s.k===8&&b.x>51)return true;
+  },
+  prog:s=>`Koni ${s.k} / 8`},
+ {name:'Sekiz Çizme',info:()=>'Sağdaki birinci çembere gir, tam tur at; sonra ikinci çembere geçip ters yönde tam tur at. Çizginin dışına çıkma.',
+  start:[55.5,38,-Math.PI/2],goal:[55.5,33],
+  act:b=>hyp(b.x-C1[0],b.y-C1[1])<CR,
+  init:()=>({a1:0,a2:0,cur:0,prev:0}),
+  up(b,s){
+    const d1=hyp(b.x-C1[0],b.y-C1[1]),d2=hyp(b.x-C2[0],b.y-C2[1]);
+    if(Math.min(d1,d2)>CR+T.fig)return'Çember çizgisinin dışına çıktın';
+    const cur=d1<=d2?1:2,c=cur===1?C1:C2,ang=Math.atan2(b.y-c[1],b.x-c[0]);
+    if(s.cur===cur){const da=wrap(ang-s.prev);if(cur===1)s.a1+=da;else s.a2+=da;}
+    s.cur=cur;s.prev=ang;
+    if(Math.abs(s.a1)>2&&Math.abs(s.a2)>2&&Math.sign(s.a1)===Math.sign(s.a2))return'İkinci çemberde ters yönde dönmelisin';
+    const full=2*Math.PI*.92;
+    if(Math.abs(s.a1)>=full&&Math.abs(s.a2)>=full)return true;
+  },
+  prog:s=>{const f=a=>Math.min(100,Math.round(Math.abs(a)/(2*Math.PI*.92)*100));return`Birinci çember %${f(s.a1)} · İkinci çember %${f(s.a2)}`}},
+ {name:'Denge Çizgisi',info:()=>'20 m uzunluğundaki, 20 cm genişliğindeki sarı çizginin üzerinden ayrılmadan, yavaş ve dengeli geç.',
+  start:[38,22,Math.PI],goal:[30,22],
+  act:b=>b.x<30&&Math.abs(b.y-22)<.8&&Math.cos(b.th)<0,
+  init:()=>({}),
+  up(b){
+    if(b.x<29.3&&Math.abs(b.y-22)>T.bal)return'Denge çizgisinden çıktın';
+    if(b.x<=10)return true;
+  },
+  prog:(s,b)=>`${Math.max(0,Math.min(20,30-b.x)).toFixed(1)} / 20 m`},
+ {name:'Dar Alanda U Dönüşü',info:()=>`${UH===7?'8 × 7':'8 × 6'} m'lik alana gir, çizgilere basmadan U dönüşü yapıp geldiğin taraftan çık.`,
+  start:[-1,0,0],goal:[4.5,0],
+  act:b=>b.x>4&&b.y>25&&b.y<25+UH,
+  init:()=>({turned:false}),
+  up(b,s){
+    const pts=[[b.x,b.y],[b.x+Math.cos(b.th)*.9,b.y+Math.sin(b.th)*.9]];
+    for(const[px,py]of pts){if(py<25.15||py>25+UH-.15||px>11.85)return'U dönüşü alanının çizgisine bastın';}
+    if(Math.cos(b.th)<-.5)s.turned=true;
+    if(s.turned&&b.x<4)return true;
+    if(!s.turned&&b.x<3.5)return'U dönüşü yapmadan alandan çıktın';
+  },
+  prog:s=>s.turned?'Dönüş tamam, alandan çık':'Alanın içinde dön'},
+ {name:'Hızlan · Yavaşla · Dur',info:()=>`İlk 30 m'de ${target} km/h hıza ulaş, sonraki 30 m'de yavaşla ve kırmızı DURMA alanında tam dur.`,
+  start:[0,14,0],goal:[5,14],
+  act:b=>b.x>4&&Math.abs(b.y-14)<2.5&&Math.cos(b.th)>0,
+  init:()=>({ph:0,max:0}),
+  up(b,s){
+    if(Math.abs(b.y-14)>3)return'Şeritten çıktın';
+    s.max=Math.max(s.max,kmh(b.v));
+    if(s.ph===0&&b.x>=34){if(s.max<target-T.spd)return`30 m sonunda ${target} km/h'ye ulaşılamadı (en fazla ${Math.round(s.max)} km/h)`;s.ph=1;}
+    if(s.ph===1){if(b.x>64)return'DURMA alanını geçtin';if(b.v<.15&&b.x>=60)return true;}
+  },
+  canStop:(b,s)=>s.ph===1&&b.x>=59.5,
+  prog:(s,b)=>s.ph===0?`Hedef ${target} km/h · en yüksek ${Math.round(s.max)} km/h · ${Math.max(0,34-b.x).toFixed(0)} m kaldı`:`DURMA alanına ${Math.max(0,60-b.x).toFixed(0)} m`},
+ {name:'Engelden Kaçış',info:()=>'20 m içinde 20 km/h hıza çık. Giriş noktasından geç, engelin üstünden veya altından dolaşıp çıkış noktasına dön.',
+  start:[70,6,Math.PI],goal:[65,6],
+  act:b=>b.x<66&&Math.abs(b.y-6)<2.5&&Math.cos(b.th)<0,
+  init:()=>({ph:0}),
+  up(b,s){
+    if(s.ph===0){
+      if(Math.abs(b.y-6)>3)return'Şeritten çıktın';
+      if(b.x<=44){if(kmh(b.v)<20-T.spd)return`Giriş noktasında hız 20 km/h altında (${Math.round(kmh(b.v))})`;
+        if(Math.abs(b.y-6)>T.entry)return'Giriş noktasından geçilmedi';s.ph=1;}
+    }else{
+      const pts=[[b.x,b.y],[b.x+Math.cos(b.th)*.9,b.y+Math.sin(b.th)*.9]];
+      for(const[px,py]of pts){
+        if(px>39.6&&px<42.4&&(py<4.5-T.outer||py>7.5+T.outer))return'Engel alanının dışına taştın';
+        if(px>40.8&&px<41.2&&py>5.5-T.obsPad&&py<6.5+T.obsPad)return'Engele çarptın';
+      }
+      if(b.x<=38){if(Math.abs(b.y-6)>T.exit)return'Çıkış noktasına dönülmedi';return true;}
+    }
+  },
+  prog:(s,b)=>s.ph===0?`Giriş noktasına ${Math.max(0,b.x-44).toFixed(0)} m · hedef 20 km/h`:'Engeli dolaş, çıkışa dön'},
+ {name:'Ani Fren',info:()=>`20 m'de 20 km/h hıza ulaş. Kırmızı ANİ FREN çizgisinde sert fren yap ve ${T.brake} m içinde dur.`,
+  start:[1,-2,0],goal:[7,-2],
+  act:b=>b.x>6&&Math.abs(b.y+2)<2.5&&Math.cos(b.th)>0,
+  init:()=>({ph:0,d:0}),
+  up(b,s){
+    if(Math.abs(b.y+2)>3)return'Şeritten çıktın';
+    if(s.ph===0&&b.x>=26){if(kmh(b.v)<20-T.spd)return`Fren çizgisinde hız 20 km/h altında (${Math.round(kmh(b.v))})`;s.ph=1;}
+    if(s.ph===1){if(b.v<.15){s.d=b.x-26;return true;}if(b.x>26+T.brake)return'Fren mesafesi aşıldı';}
+  },
+  canStop:(b,s)=>s.ph===1,
+  prog:(s,b)=>s.ph===0?`Fren çizgisine ${Math.max(0,26-b.x).toFixed(0)} m`:`Fren! ${(b.x-26).toFixed(1)} m`}
+];
+function uStart(){return[-1,25+UH-1.5,0]}
+function uGoal(){return[4.5,25+UH-1.5]}
+
+/* ---------- Route arrows ---------- */
+function route(){return[
+ [[2,42],[53,42],[55.5,39.5],[55.5,33.8]],
+ [[50,26],[46,22.6],[31,22]],
+ [[9.5,22],[-1,22],[-1,25+UH-1.5],[3.6,25+UH-1.5]],
+ [[3.6,26.5],[-2,26.5],[-2,14],[3.6,14]],
+ [[64.5,14],[68,14],[68,6],[66,6]],
+ [[37.5,6],[2,6],[2,-2],[5.6,-2]]
+]}
+
+/* ---------- State ---------- */
+let b,si,active,st,faults,time,running=false,freeze=0,footT=0,zoom=1,cam={x:0,y:0},endInfo=null;
+const key={gas:0,brake:0,left:0,right:0};
+
+function placeAt(i){
+  const p=i===3?uStart():S[i].start;
+  b={x:p[0],y:p[1],th:p[2],v:0,steer:0};active=false;st=null;footT=0;
+}
+function newGame(){
+  setRules();si=0;faults=[];time=0;placeAt(0);cam.x=b.x;cam.y=b.y;running=true;freeze=0;
+  $('start').classList.add('hide');$('res').classList.add('hide');buildList();
+}
+function buildList(){
+  $('slist').innerHTML=S.map((s,i)=>`<li class="${i<si?'done':i===si?'cur':''}"><i>${i<si?'✓':i+1}</i>${s.name}</li>`).join('');
+}
+let toastT;
+function toast(msg,kind){const t=$('toast');t.textContent=msg;t.className='hud show '+kind;clearTimeout(toastT);toastT=setTimeout(()=>t.className='hud '+kind,1600);}
+function fail(msg){
+  faults.push(`${S[si].name}: ${msg}`);
+  if(opts.mode==='sinav'){running=false;finish(false,msg);return;}
+  toast(msg,'bad');freeze=1.2;placeAt(si);
+}
+function pass(){
+  si++;active=false;st=null;footT=0;
+  if(si>=S.length){running=false;finish(true);return;}
+  toast('Aşama tamamlandı ✓','good');buildList();
+}
+function finish(ok,msg){
+  buildList();
+  const t=time.toFixed(1);
+  if(ok){
+    const clean=faults.length===0;
+    $('resT').textContent=clean?'Tebrikler, geçtin!':'Parkur tamamlandı';
+    $('resT').style.color=clean?'#7fd88f':'#f5c400';
+    $('resP').textContent=clean?`Tüm aşamaları hatasız tamamladın. Süre: ${t} sn.`:`Süre: ${t} sn. Antrenmanda ${faults.length} hata yaptın; gerçek sınavda ilk hata ile elenirdin.`;
+  }else{
+    $('resT').textContent='Kaldın';$('resT').style.color='#ff8787';
+    $('resP').textContent=`${S[si].name} aşamasında elendin: ${msg}. Süre: ${t} sn.`;
+  }
+  $('resL').innerHTML=faults.map(f=>`<li>${f.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</li>`).join('');
+  $('res').classList.remove('hide');
+}
+
+/* ---------- Physics ---------- */
+function step(dt){
+  const steerT=key.right-key.left;
+  b.steer+=(steerT-b.steer)*Math.min(1,dt*5);
+  let a;
+  if(key.brake)a=-7.5;else if(key.gas)a=3.3*(1-b.v/22);else a=-.35-.004*b.v*b.v;
+  b.v=Math.max(0,b.v+a*dt);
+  const R=Math.max(2,b.v*b.v/5);
+  b.th+=b.v*(b.steer/R)*dt;
+  b.x+=Math.cos(b.th)*b.v*dt;b.y+=Math.sin(b.th)*b.v*dt;
+  time+=dt;
+
+  if(b.x<WB.x0||b.x>WB.x1||b.y<WB.y0||b.y>WB.y1)return fail('Parkurun dışına çıktın');
+  const fx=b.x+Math.cos(b.th)*.9,fy=b.y+Math.sin(b.th)*.9,rx=b.x-Math.cos(b.th)*.9,ry=b.y-Math.sin(b.th)*.9;
+  for(const[cx,cy]of CONES){if(hyp(fx-cx,fy-cy)<.45||hyp(b.x-cx,b.y-cy)<.5||hyp(rx-cx,ry-cy)<.45)return fail('Koniye çarptın');}
+
+  const s=S[si];
+  if(!active){if(s.act(b)){active=true;st=s.init(b);}else return;}
+  const r=s.up(b,st);
+  if(r===true)return pass();
+  if(typeof r==='string')return fail(r);
+  const canStop=s.canStop&&s.canStop(b,st);
+  if(!canStop&&b.v<T.footV){footT+=dt;if(footT>T.footT)return fail('Ayağın yere değdi (çok yavaşladın)');}else footT=0;
+}
+
+/* ---------- Drawing ---------- */
+function line(pts,w,col,dash){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.lineWidth=w;ctx.strokeStyle=col;ctx.setLineDash(dash||[]);ctx.stroke();ctx.setLineDash([]);}
+function text(s,x,y,size,col,align,rot){ctx.save();ctx.translate(x,y);if(rot)ctx.rotate(rot);ctx.font=`800 ${size}px "Barlow Condensed",sans-serif`;ctx.fillStyle=col;ctx.textAlign=align||'center';ctx.textBaseline='middle';ctx.fillText(s,0,0);ctx.restore();}
+function arrowHead(p,q,col,sz){const a=Math.atan2(q[1]-p[1],q[0]-p[0]);ctx.beginPath();ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0]-Math.cos(a-.5)*sz,q[1]-Math.sin(a-.5)*sz);ctx.lineTo(q[0]-Math.cos(a+.5)*sz,q[1]-Math.sin(a+.5)*sz);ctx.closePath();ctx.fillStyle=col;ctx.fill();}
+function cone(x,y){ctx.beginPath();ctx.ellipse(x+.12,y+.14,.36,.3,0,0,7);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fill();
+  ctx.fillStyle='#1d1d1d';ctx.fillRect(x-.32,y-.32,.64,.64);
+  ctx.beginPath();ctx.arc(x,y,.26,0,7);ctx.fillStyle='#ff6a13';ctx.fill();ctx.beginPath();ctx.arc(x,y,.16,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(x,y,.08,0,7);ctx.fillStyle='#ff6a13';ctx.fill();}
+
+function drawWorld(){
+  // grass + pad
+  ctx.fillStyle='#4f7a3c';ctx.fillRect(-60,-60,200,180);
+  ctx.fillStyle='#4a4e54';ctx.fillRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
+  ctx.strokeStyle='#e9ecef';ctx.lineWidth=.25;ctx.strokeRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
+  // subtle asphalt grain
+  ctx.fillStyle='rgba(255,255,255,.025)';for(let i=0;i<500;i++){const x=WB.x0+((i*7919)%770)/10,y=WB.y0+((i*104729)%540)/10;ctx.fillRect(x,y,.3,.3);}
+
+  // routes
+  for(const r of route()){line(r,.16,'rgba(70,150,255,.75)',[.7,.5]);arrowHead(r[r.length-2],r[r.length-1],'rgba(70,150,255,.95)',.8);}
+
+  // Slalom
+  for(let i=0;i<7;i++){line([[9+6*i,43.3],[13+6*i,43.3]],.06,'#ff6b6b');text('6 m',11+6*i,43.9,.7,'#ffc9c9');}
+  CONES.forEach(c=>cone(c[0],c[1]));
+  text('SLALOM',29,45.2,1.2,'#fff');
+  line([[4,40],[4,44]],.15,'#fff');text('BAŞLA',3.2,39.4,.7,'#fff');
+
+  // Figure eight
+  [C1,C2].forEach((c,i)=>{ctx.beginPath();ctx.arc(c[0],c[1],CR,0,7);ctx.lineWidth=.18;ctx.strokeStyle='#e03131';ctx.stroke();
+    line([c,[c[0]+CR-.3,c[1]]],.07,'#4dabf7');arrowHead(c,[c[0]+CR-.2,c[1]],'#4dabf7',.4);text('3,5 m',c[0]+1.6,c[1]-.5,.65,'#d0ebff');
+    text(i?'İkinci Çember':'Birinci Çember',c[0],c[1]-CR-.7,.75,'#ffc9c9');});
+  text('SEKİZ ÇİZME',48.5,35,1.2,'#fff');
+
+  // Balance line
+  ctx.fillStyle='#f5c400';ctx.fillRect(10,21.9,20,.2);
+  line([[10,21.3],[10,22.7]],.08,'#fff');line([[30,21.3],[30,22.7]],.08,'#fff');
+  text('20 METRE · DENGE ÇİZGİSİ',20,20.9,.9,'#ffe066');text('20 cm',31.2,22,.55,'#fff','left');
+
+  // U-turn box
+  const yb=25+UH;line([[4,25],[12,25],[12,yb],[4,yb]],.18,'#e03131');
+  text('8 METRE',8,24.3,.7,'#ffc9c9');text(`${UH} METRE`,12.8,25+UH/2,.7,'#ffc9c9','center',Math.PI/2);
+  text('DAR ALANDA U DÖNÜŞÜ',8,yb+1,.9,'#fff');
+
+  // Accel / decel / stop
+  line([[4,12],[4,16]],.15,'#fff');line([[34,12],[34,16]],.12,'#f5c400',[.4,.3]);
+  ctx.fillStyle='rgba(224,49,49,.25)';ctx.fillRect(60,12.5,4,3);line([[60,12.5],[64,12.5],[64,15.5],[60,15.5],[60,12.5]],.15,'#e03131');
+  text('DURMA',62,11.8,.9,'#ff8787');
+  text(`30 METRE HIZLANMA · ${target} km/h`,19,12.2,.9,'#fff');text('30 METRE YAVAŞLAMA',47,12.2,.9,'#fff');
+  line([[6,15.4],[32,15.4]],.12,'#f5c400');arrowHead([30,15.4],[32.5,15.4],'#f5c400',.5);
+  line([[36,15.4],[58,15.4]],.12,'#e03131');arrowHead([56,15.4],[58.5,15.4],'#e03131',.5);
+
+  // Obstacle avoidance
+  line([[66,4.3],[46,4.3]],.12,'#f5c400');arrowHead([48,4.3],[45.5,4.3],'#f5c400',.5);text('20 km/h HIZA ÇIKMA · 20 METRE',56,3.5,.85,'#fff');
+  line([[66,4],[66,8]],.15,'#fff');
+  ctx.fillStyle='#f5c400';ctx.fillRect(40.85,4.5,.3,1);ctx.fillRect(40.85,6.5,.3,1);ctx.fillStyle='#111';ctx.fillRect(40.85,5.5,.3,1);
+  line([[39.6,4.5],[42.4,4.5]],.16,'#e03131');line([[39.6,7.5],[42.4,7.5]],.16,'#e03131');
+  [[44,6],[38,6]].forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],.18,0,7);ctx.fillStyle='#fff';ctx.fill();});
+  ctx.setLineDash([.3,.3]);ctx.strokeStyle='rgba(245,196,0,.8)';ctx.lineWidth=.07;
+  ctx.beginPath();ctx.moveTo(44,6);ctx.quadraticCurveTo(41,3.6,38,6);ctx.moveTo(44,6);ctx.quadraticCurveTo(41,8.4,38,6);ctx.stroke();ctx.setLineDash([]);
+  text('3 m',42.5,6.6,.55,'#d0ebff');text('3 m',39.5,6.6,.55,'#d0ebff');text('GİRİŞ',44,6.7,.5,'#fff');text('ÇIKIŞ',38,6.7,.5,'#fff');
+
+  // Sudden brake
+  line([[6,-4],[6,0]],.15,'#fff');
+  line([[8,-3.6],[25,-3.6]],.12,'#f5c400');arrowHead([23,-3.6],[25.5,-3.6],'#f5c400',.5);text('20 km/h ULAŞMASI · 20 METRE',16,-4.4,.85,'#fff');
+  line([[26,-4],[26,0]],.22,'#e03131');text('ANİ FREN',26,-4.6,.9,'#ff8787');
+  line([[26+T.brake,-4],[26+T.brake,0]],.08,'rgba(255,255,255,.6)',[.3,.3]);text(`${T.brake} m`,26+T.brake/2,.5,.6,'#ffc9c9');
+  ctx.fillStyle='#1f5fbf';ctx.fillRect(36.5,-4,1.4,4);text('BİTİŞ',37.2,-2,.75,'#fff','center',-Math.PI/2);
+}
+
+function drawBike(){
+  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.th);
+  const lean=b.steer*Math.min(1,b.v/4)*.12;
+  ctx.beginPath();ctx.ellipse(.1,.25+lean*2,1.05,.38,0,0,7);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fill();
+  ctx.fillStyle='#151515';ctx.fillRect(-1,-.1,.45,.2);
+  ctx.save();ctx.translate(.78,0);ctx.rotate(b.steer*.35);ctx.fillRect(-.22,-.09,.44,.18);ctx.restore();
+  ctx.fillStyle='#c92a2a';ctx.beginPath();ctx.roundRect(-.72,-.24,1.4,.48,.2);ctx.fill();
+  ctx.fillStyle='#ff6b6b';ctx.fillRect(-.1,-.2,.6,.08);
+  ctx.fillStyle='#222';ctx.beginPath();ctx.roundRect(-.6,-.16,.55,.32,.12);ctx.fill();
+  ctx.save();ctx.translate(.48,0);ctx.rotate(b.steer*.35);ctx.strokeStyle='#ddd';ctx.lineWidth=.07;ctx.beginPath();ctx.moveTo(0,-.42);ctx.lineTo(0,.42);ctx.stroke();ctx.restore();
+  ctx.fillStyle='#fff7c2';ctx.beginPath();ctx.arc(.72,0,.08,0,7);ctx.fill();
+  ctx.fillStyle='#343a40';ctx.beginPath();ctx.ellipse(-.25,0,.24,.36,0,0,7);ctx.fill();
+  ctx.fillStyle='#343a40';ctx.lineWidth=.12;ctx.strokeStyle='#343a40';ctx.beginPath();ctx.moveTo(-.2,-.3);ctx.lineTo(.45,-.36);ctx.moveTo(-.2,.3);ctx.lineTo(.45,.36);ctx.stroke();
+  ctx.fillStyle='#e03131';ctx.beginPath();ctx.arc(-.12,0,.2,0,7);ctx.fill();ctx.fillStyle='#111';ctx.beginPath();ctx.arc(-.04,0,.12,-1.2,1.2);ctx.fill();
+  ctx.restore();
+}
+
+function drawGuide(){
+  if(active||!running||si>=S.length)return;
+  const g=si===3?uGoal():S[si].goal;
+  const dx=g[0]-b.x,dy=g[1]-b.y,d=hyp(dx,dy);if(d<4)return;
+  const a=Math.atan2(dy,dx),r=2.2,p=[b.x+Math.cos(a)*r,b.y+Math.sin(a)*r],q=[b.x+Math.cos(a)*(r+1.1),b.y+Math.sin(a)*(r+1.1)];
+  line([p,q],.18,'#f5c400');arrowHead(p,[q[0]+Math.cos(a)*.3,q[1]+Math.sin(a)*.3],'#f5c400',.6);
+}
+
+function drawMini(){
+  const w=mini.width,h=mini.height,sc=Math.min((w-16)/(WB.x1-WB.x0),(h-16)/(WB.y1-WB.y0));
+  mctx.clearRect(0,0,w,h);mctx.save();mctx.translate(8-WB.x0*sc,8-WB.y0*sc);mctx.scale(sc,sc);
+  mctx.fillStyle='#4a4e54';mctx.fillRect(WB.x0,WB.y0,WB.x1-WB.x0,WB.y1-WB.y0);
+  mctx.lineWidth=.6;mctx.strokeStyle='#e03131';[C1,C2].forEach(c=>{mctx.beginPath();mctx.arc(c[0],c[1],CR,0,7);mctx.stroke();});
+  mctx.strokeRect(4,25,8,UH);mctx.strokeRect(60,12.5,4,3);
+  mctx.fillStyle='#ff6a13';CONES.forEach(c=>mctx.fillRect(c[0]-.6,c[1]-.6,1.2,1.2));
+  mctx.fillStyle='#f5c400';mctx.fillRect(10,21.5,20,1);mctx.fillRect(40.5,4.5,1,3);
+  mctx.fillStyle='#e03131';mctx.fillRect(25.5,-4,1,4);mctx.fillStyle='#4dabf7';mctx.fillRect(36.5,-4,1.4,4);
+  mctx.fillStyle='#fff';mctx.beginPath();mctx.arc(b.x,b.y,1.6,0,7);mctx.fill();
+  mctx.restore();
+}
+
+function resize(){const d=Math.min(devicePixelRatio||1,2);cv.width=innerWidth*d;cv.height=innerHeight*d;}
+addEventListener('resize',resize);resize();
+
+function render(){
+  const d=Math.min(devicePixelRatio||1,2),W=cv.width,H=cv.height;
+  const sc=Math.max(14,Math.min(W,H)/d/24)*zoom*d;
+  const la=Math.min(b.v*.6,6);
+  cam.x+=(b.x+Math.cos(b.th)*la-cam.x)*.08;cam.y+=(b.y+Math.sin(b.th)*la-cam.y)*.08;
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);
+  ctx.setTransform(sc,0,0,sc,W/2-cam.x*sc,H/2-cam.y*sc);
+  drawWorld();drawGuide();drawBike();
+  drawMini();
+  // HUD
+  const s=S[si]||S[S.length-1];
+  $('tname').textContent=`${Math.min(si+1,7)}/7 · ${s.name}`;
+  $('tinfo').textContent=s.info();
+  $('tprog').textContent=active&&st?s.prog(st,b):'Sarı oku takip et, aşama çizgisinden gir';
+  $('spd').firstChild.nodeValue=Math.round(kmh(b.v))+' ';
+  $('meta').textContent=`${opts.cls} · ${opts.mode==='sinav'?'Sınav':'Antrenman'} · ${time.toFixed(1)} sn${opts.mode==='antrenman'?` · ${faults.length} hata`:''}`;
+}
+
+let last=performance.now();
+function loop(now){
+  let dt=Math.min(.05,(now-last)/1000);last=now;
+  if(running){
+    if(freeze>0){freeze-=dt;}
+    else{const n=4;for(let i=0;i<n&&running;i++){step(dt/n);if(freeze>0)break;}}
+  }
+  if(b)render();
+  requestAnimationFrame(loop);
+}
+
+/* ---------- Input ---------- */
+const km={ArrowUp:'gas',KeyW:'gas',ArrowDown:'brake',KeyS:'brake',Space:'brake',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};
+addEventListener('keydown',e=>{
+  if(km[e.code]){key[km[e.code]]=1;e.preventDefault();}
+  if(e.code==='KeyR'&&running){placeAt(si);freeze=.3;}
+  if(e.key==='+'||e.key==='=')zoom=Math.min(2.5,zoom*1.15);
+  if(e.key==='-'||e.key==='_')zoom=Math.max(.4,zoom/1.15);
+  if(e.code==='Enter'&&!running)newGame();
+});
+addEventListener('keyup',e=>{if(km[e.code])key[km[e.code]]=0;});
+addEventListener('blur',()=>{for(const k in key)key[k]=0;});
+document.querySelectorAll('#touch button').forEach(btn=>{
+  const k=btn.dataset.k;
+  const on=e=>{e.preventDefault();key[k]=1;btn.classList.add('on');};
+  const off=e=>{e.preventDefault();key[k]=0;btn.classList.remove('on');};
+  btn.addEventListener('pointerdown',on);btn.addEventListener('pointerup',off);btn.addEventListener('pointercancel',off);btn.addEventListener('pointerleave',off);
+});
+if(matchMedia('(pointer:coarse)').matches)$('touch').style.display='flex';
+$('goBtn').addEventListener('click',newGame);
+$('againBtn').addEventListener('click',()=>{$('res').classList.add('hide');$('start').classList.remove('hide');});
+
+time=0;faults=[];si=0;setRules();placeAt(0);cam.x=b.x+12;cam.y=b.y-6;buildList();
+requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
