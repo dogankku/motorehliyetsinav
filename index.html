@@ -77,8 +77,8 @@ body.fpv #mini{bottom:auto;top:150px;width:240px!important;height:184px!importan
 #joy{position:relative;width:160px;height:160px;border-radius:50%;display:none;touch-action:none;pointer-events:auto;
   background:radial-gradient(circle,rgba(255,255,255,.08) 0 34%,rgba(255,255,255,.16) 35% 36%,rgba(255,255,255,.07) 37% 100%);border:2px solid rgba(255,255,255,.28);box-shadow:inset 0 0 18px rgba(0,0,0,.35)}
 #joy i{position:absolute;top:50%;left:50%;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#c9ced3 60%,#8d949b);box-shadow:0 5px 14px rgba(0,0,0,.45)}
-#joy::before,#joy::after{position:absolute;left:50%;transform:translateX(-50%);font:800 12px "Barlow Condensed",sans-serif;color:rgba(255,255,255,.75)}
-#joy::before{content:'GAZ ▲';top:7px}#joy::after{content:'▼ FREN';bottom:7px}
+#joy::before,#joy::after{position:absolute;top:50%;transform:translateY(-50%);font:800 18px Barlow,sans-serif;color:rgba(255,255,255,.65)}
+#joy::before{content:'◀';left:10px}#joy::after{content:'▶';right:10px}
 #joy b{position:absolute;top:50%;transform:translateY(-50%);font:800 16px Barlow,sans-serif;color:rgba(255,255,255,.6)}
 body.joy #joy{display:block}body.joy #spad{display:none}
 #rot{position:fixed;inset:0;z-index:9;display:none;place-items:center;text-align:center;background:#0d1117;color:#fff;padding:24px;font:600 18px Barlow,sans-serif}
@@ -134,7 +134,7 @@ body.joy #joy{display:block}body.joy #spad{display:none}
     <div class="opt touchOnly"><b>Telefonda direksiyon</b><div class="seg" data-o="steer"><button class="on" data-v="joy">Joystick</button><button data-v="pad">Ekranda kaydır</button><button data-v="tilt">Telefonu eğ</button></div></div>
     <div class="opt"><b>Grafik</b><div class="seg" data-o="gfx"><button class="on" data-v="high">Yüksek</button><button data-v="low">Düşük · zayıf cihazlar için</button></div></div>
     <div class="opt"><b>Zorluk</b><div class="seg" data-o="diff"><button data-v="real">Gerçekçi</button><button class="on" data-v="easy">Kolay</button></div></div>
-    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Joystick: sol alttaki topu sağa sola it, direksiyon döner; yukarı it gaz, aşağı çek fren (ne kadar itersen o kadar). Sağdaki GAZ ve FREN düğmeleri de çalışır. İstersen "Ekranda kaydır" ile sadece direksiyon şeridi kullanabilirsin. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
+    <div class="keys touchOnly"><b>Telefonda kontroller</b><p class="knote" style="margin-top:0">Telefonu yan çevir. Sol alttaki joystick yalnızca direksiyondur: topu sağa sola it, ne kadar itersen o kadar döner. Gaz ve fren için sağdaki GAZ ve FREN düğmelerini basılı tut. İstersen "Ekranda kaydır" ile sadece direksiyon şeridi kullanabilirsin. Ortadaki düğmeler: sinyal, korna, far, aşağı bak, görünüş. "Telefonu eğ" seçersen direksiyon telefonun eğimiyle döner; başladığın an telefonun tuttuğun açısı düz kabul edilir.</p></div>
     <div class="keys keysOnly">
       <b>Tuşlar</b>
       <div class="kgrid">
@@ -1132,13 +1132,12 @@ const portraitChk=()=>document.body.classList.toggle('portrait',innerHeight>inne
   pad.addEventListener('pointerup',end);pad.addEventListener('pointercancel',end);}
 {const joy=$('joy'),knob=joy.querySelector('i');let pid=null;
   const upd=e=>{const r=joy.getBoundingClientRect(),R=r.width/2-30;let dx=(e.clientX-(r.left+r.width/2))/R,dy=(e.clientY-(r.top+r.height/2))/R;
-    const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m;}
-    knob.style.transform=`translate(${(dx*R).toFixed(0)}px,${(dy*R).toFixed(0)}px)`;
-    steerAnalog=Math.abs(dx)<.08?0:Math.sign(dx)*(Math.abs(dx)-.08)/.92;
-    gasAnalog=dy<-.15?Math.min(1,(-dy-.15)/.75):0;brakeAnalog=dy>.15?Math.min(1,(dy-.15)/.75):0;};
+    dx=Math.max(-1,Math.min(1,dx));
+    knob.style.transform=`translateX(${(dx*R).toFixed(0)}px)`;
+    steerAnalog=Math.abs(dx)<.08?0:Math.sign(dx)*(Math.abs(dx)-.08)/.92;};
   joy.addEventListener('pointerdown',e=>{e.preventDefault();pid=e.pointerId;joy.setPointerCapture(pid);upd(e);});
   joy.addEventListener('pointermove',e=>{if(e.pointerId===pid)upd(e);});
-  const end=e=>{if(e.pointerId!==pid)return;pid=null;steerAnalog=0;gasAnalog=0;brakeAnalog=0;knob.style.transform='';};
+  const end=e=>{if(e.pointerId!==pid)return;pid=null;steerAnalog=0;knob.style.transform='';};
   joy.addEventListener('pointerup',end);joy.addEventListener('pointercancel',end);}
 function onTilt(e){
   if(opts.steer!=='tilt'||e.beta==null)return;
